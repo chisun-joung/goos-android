@@ -1,16 +1,22 @@
 package com.jooyunghan.auctionsniper.test;
 
-import android.test.InstrumentationTestCase;
+import com.jooyunghan.auctionsniper.MainActivity;
 
-public class AuctionSniperEndToEndTest extends InstrumentationTestCase {
+import android.test.ActivityInstrumentationTestCase2;
+
+public class AuctionSniperEndToEndTest extends ActivityInstrumentationTestCase2<MainActivity> {
 	private FakeAuctionServer auction;
 	private ApplicationRunner application;
+
+	public AuctionSniperEndToEndTest() {
+		super(MainActivity.class);
+	}
 
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
 		auction = new FakeAuctionServer("item-54321");
-		application = new ApplicationRunner(getInstrumentation());
+		application = new ApplicationRunner(getInstrumentation(), getActivity());
 	}
 
 	public void testSniperJoinsAuctionUntilAuctionCloses() throws Exception {
