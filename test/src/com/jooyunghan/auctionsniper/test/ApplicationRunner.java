@@ -1,14 +1,19 @@
 package com.jooyunghan.auctionsniper.test;
 
+import android.app.Instrumentation;
+
 public class ApplicationRunner {
 
+	Instrumentation inst;
+	
+	public ApplicationRunner(Instrumentation instrumentation) {
+		this.inst = instrumentation;
+	}
+
 	public void startBiddingIn(FakeAuctionServer auction) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void showsSniperHasLostAuction() {
-		// TODO Auto-generated method stub
 		
 	}
 

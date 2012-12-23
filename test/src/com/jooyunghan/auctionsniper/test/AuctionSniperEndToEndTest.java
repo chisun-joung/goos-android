@@ -1,11 +1,17 @@
 package com.jooyunghan.auctionsniper.test;
 
-import android.test.AndroidTestCase;
+import android.test.InstrumentationTestCase;
 
-public class AuctionSniperEndToEndTest extends AndroidTestCase {
-	private final FakeAuctionServer auction = new FakeAuctionServer(
-			"item-54321");
-	private final ApplicationRunner application = new ApplicationRunner();
+public class AuctionSniperEndToEndTest extends InstrumentationTestCase {
+	private FakeAuctionServer auction;
+	private ApplicationRunner application;
+
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+		auction = new FakeAuctionServer("item-54321");
+		application = new ApplicationRunner(getInstrumentation());
+	}
 
 	public void testSniperJoinsAuctionUntilAuctionCloses() throws Exception {
 		auction.startSellingItem();
@@ -15,9 +21,10 @@ public class AuctionSniperEndToEndTest extends AndroidTestCase {
 		application.showsSniperHasLostAuction();
 	}
 
-	// Additional cleanup
-	public void setup() {
+	@Override
+	public void tearDown() throws Exception {
 		auction.stop();
 		application.stop();
+		super.tearDown();
 	}
 }
