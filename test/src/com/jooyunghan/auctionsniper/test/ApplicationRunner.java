@@ -3,7 +3,7 @@ package com.jooyunghan.auctionsniper.test;
 import android.app.Activity;
 import android.app.Instrumentation;
 
-import com.jooyunghan.auctionsniper.Status;
+import com.jooyunghan.auctionsniper.SniperStatus;
 
 public class ApplicationRunner {
 
@@ -14,11 +14,11 @@ public class ApplicationRunner {
 	}
 
 	public void startBiddingIn(FakeAuctionServer auction) {
-		driver.showsSniperStatus(Status.STATUS_JOINING);
+		driver.showsSniperStatus(SniperStatus.STATUS_JOINING);
 	}
 
 	public void showsSniperHasLostAuction() {
-		
+		driver.showsSniperStatus(SniperStatus.STATUS_LOST);
 	}
 
 	public void stop() {
