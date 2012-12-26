@@ -2,10 +2,8 @@ package com.jooyunghan.auctionsniper;
 
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Message;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -14,7 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements AuctionEventListener {
 
 	private static final String ITEM_ID_AS_LOGIN = "auction-%s";
 	private static final String AUCTION_RESOURCE = "Auction";
@@ -51,18 +49,8 @@ public class MainActivity extends Activity {
 	private void joinAuction(XMPPConnection connection, String itemId)
 			throws XMPPException {
 		Chat chat = connection.getChatManager().createChat(
-				auctionId(itemId, connection), new MessageListener() {
-					@Override
-					public void processMessage(Chat chat, Message message) {
-						Log.d("han", "message received by sniper");
-						runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								showStatus(SniperStatus.STATUS_LOST);
-							}
-						});
-					}
-				});
+				auctionId(itemId, connection),
+				new AuctionMessageTranslator(this));
 		Log.d("han", "chat created with " + chat.getParticipant());
 		this.notToBeGCd = chat;
 		chat.sendMessage(JOIN_COMMAND_FORMAT);
@@ -95,5 +83,15 @@ public class MainActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
+	}
+
+	@Override
+	public void auctionClosed() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				showStatus(SniperStatus.STATUS_LOST);
+			}
+		});
 	}
 }
