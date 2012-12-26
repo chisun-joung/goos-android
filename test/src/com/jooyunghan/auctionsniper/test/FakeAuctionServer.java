@@ -1,9 +1,8 @@
 package com.jooyunghan.auctionsniper.test;
 
-import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import org.hamcrest.Matchers;
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -11,9 +10,9 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 
-import com.jooyunghan.auctionsniper.MainActivity;
-
 import android.util.Log;
+
+import com.jooyunghan.auctionsniper.MainActivity;
 
 public class FakeAuctionServer {
 	private static final String XMPP_HOSTNAME = "localhost";
@@ -63,7 +62,8 @@ public class FakeAuctionServer {
 	private void receivesAMessageMatching(String sniperId, String format)
 			throws InterruptedException {
 		messageListener.receivesAMessage(Matchers.equalTo(format));
-		assertThat(currentChat.getParticipant(), Matchers.startsWith(sniperId + "@"));
+		assertThat(currentChat.getParticipant(),
+				Matchers.startsWith(sniperId + "@"));
 	}
 
 	public void announceClosed() throws XMPPException {
