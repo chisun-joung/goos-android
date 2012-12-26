@@ -48,11 +48,21 @@ public class MainActivity extends Activity implements SniperListener {
 
 	private void joinAuction(XMPPConnection connection, String itemId)
 			throws XMPPException {
-		Chat chat = connection.getChatManager().createChat(
-				auctionId(itemId, connection),
-				new AuctionMessageTranslator(new AuctionSniper(this)));
-		Log.d("han", "chat created with " + chat.getParticipant());
+		final Chat chat = connection.getChatManager().createChat(
+				auctionId(itemId, connection), null);
 		this.notToBeGCd = chat;
+
+		Auction auction = new Auction() {
+			@Override
+			public void bid(int price) {
+				try {
+					chat.sendMessage(String.format(BID_COMMAND_FORMAT, price));
+				} catch (XMPPException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		chat.addMessageListener(new AuctionMessageTranslator(new AuctionSniper(auction, this)));
 		chat.sendMessage(JOIN_COMMAND_FORMAT);
 	}
 
@@ -97,6 +107,11 @@ public class MainActivity extends Activity implements SniperListener {
 
 	@Override
 	public void sniperBidding() {
-		
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				showStatus(SniperStatus.STATUS_BIDDING);
+			}
+		});
 	}
 }

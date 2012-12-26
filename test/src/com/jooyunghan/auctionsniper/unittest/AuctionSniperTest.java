@@ -12,7 +12,7 @@ import com.jooyunghan.auctionsniper.SniperListener;
 public class AuctionSniperTest extends TestCase {
 	private final Auction auction = mock(Auction.class);
 	private final SniperListener sniperListener = mock(SniperListener.class);
-	private final AuctionSniper sniper = new AuctionSniper(sniperListener);
+	private final AuctionSniper sniper = new AuctionSniper(auction, sniperListener);
 
 	public void testReportsLostWhenAuctionCloses() throws Exception {
 		sniper.auctionClosed();
