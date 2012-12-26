@@ -20,8 +20,6 @@ public class MainActivity extends Activity implements SniperListener {
 			+ AUCTION_RESOURCE;
 	private TextView statusText;
 	public Chat notToBeGCd;
-	public static final String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
-	public static final String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,37 +31,15 @@ public class MainActivity extends Activity implements SniperListener {
 		new JoinTask().execute("localhost", "sniper", "sniper", "item-54321");
 	}
 
-	class JoinTask extends AsyncTask<String, Void, Void> {
-		@Override
-		protected Void doInBackground(String... params) {
-			try {
-				joinAuction(connectTo(params[0], params[1], params[2]),
-						params[3]);
-			} catch (XMPPException e1) {
-				e1.printStackTrace();
-			}
-			return null;
-		}
-	}
-
-	private void joinAuction(XMPPConnection connection, String itemId)
-			throws XMPPException {
+	private void joinAuction(XMPPConnection connection, String itemId) {
 		final Chat chat = connection.getChatManager().createChat(
 				auctionId(itemId, connection), null);
 		this.notToBeGCd = chat;
 
-		Auction auction = new Auction() {
-			@Override
-			public void bid(int price) {
-				try {
-					chat.sendMessage(String.format(BID_COMMAND_FORMAT, price));
-				} catch (XMPPException e) {
-					e.printStackTrace();
-				}
-			}
-		};
-		chat.addMessageListener(new AuctionMessageTranslator(new AuctionSniper(auction, this)));
-		chat.sendMessage(JOIN_COMMAND_FORMAT);
+		Auction auction = new XMPPAuction(chat);
+		chat.addMessageListener(new AuctionMessageTranslator(new AuctionSniper(
+				auction, this)));
+		auction.join();
 	}
 
 	private String auctionId(String itemId, XMPPConnection connection) {
@@ -113,5 +89,18 @@ public class MainActivity extends Activity implements SniperListener {
 				showStatus(SniperStatus.STATUS_BIDDING);
 			}
 		});
+	}
+
+	class JoinTask extends AsyncTask<String, Void, Void> {
+		@Override
+		protected Void doInBackground(String... params) {
+			try {
+				joinAuction(connectTo(params[0], params[1], params[2]),
+						params[3]);
+			} catch (XMPPException e1) {
+				e1.printStackTrace();
+			}
+			return null;
+		}
 	}
 }

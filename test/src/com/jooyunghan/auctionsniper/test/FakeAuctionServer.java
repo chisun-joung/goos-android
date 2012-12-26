@@ -11,7 +11,7 @@ import org.jivesoftware.smack.XMPPException;
 
 import android.util.Log;
 
-import com.jooyunghan.auctionsniper.MainActivity;
+import com.jooyunghan.auctionsniper.XMPPAuction;
 
 public class FakeAuctionServer {
 	private static final String XMPP_HOSTNAME = "localhost";
@@ -49,13 +49,13 @@ public class FakeAuctionServer {
 
 	public void hasReceivedJoinRequestFrom(String sniperId)
 			throws InterruptedException {
-		receivesAMessageMatching(sniperId, MainActivity.JOIN_COMMAND_FORMAT);
+		receivesAMessageMatching(sniperId, XMPPAuction.JOIN_COMMAND_FORMAT);
 	}
 
 	public void hasReceivedBid(int bid, String sniperId)
 			throws InterruptedException {
 		receivesAMessageMatching(sniperId,
-				String.format(MainActivity.BID_COMMAND_FORMAT, bid));
+				String.format(XMPPAuction.BID_COMMAND_FORMAT, bid));
 	}
 
 	private void receivesAMessageMatching(String sniperId, String format)
