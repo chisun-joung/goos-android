@@ -12,7 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements SniperListener {
+public class MainActivity extends Activity {
 
 	private static final String ITEM_ID_AS_LOGIN = "auction-%s";
 	private static final String AUCTION_RESOURCE = "Auction";
@@ -27,7 +27,6 @@ public class MainActivity extends Activity implements SniperListener {
 		setContentView(R.layout.activity_main);
 		statusText = (TextView) findViewById(R.id.status);
 		statusText.setText(SniperStatus.STATUS_JOINING);
-
 		new JoinTask().execute("localhost", "sniper", "sniper", "item-54321");
 	}
 
@@ -38,7 +37,7 @@ public class MainActivity extends Activity implements SniperListener {
 
 		Auction auction = new XMPPAuction(chat);
 		chat.addMessageListener(new AuctionMessageTranslator(new AuctionSniper(
-				auction, this)));
+				auction, new SniperStateDisplayer(this))));
 		auction.join();
 	}
 
@@ -59,36 +58,11 @@ public class MainActivity extends Activity implements SniperListener {
 		return connection;
 	}
 
-	private void showStatus(String status) {
-		statusText.setText(status);
-		Log.d("han", "showStatus:" + status);
-	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
-	}
-
-	@Override
-	public void sniperLost() {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				showStatus(SniperStatus.STATUS_LOST);
-			}
-		});
-	}
-
-	@Override
-	public void sniperBidding() {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				showStatus(SniperStatus.STATUS_BIDDING);
-			}
-		});
 	}
 
 	class JoinTask extends AsyncTask<String, Void, Void> {
