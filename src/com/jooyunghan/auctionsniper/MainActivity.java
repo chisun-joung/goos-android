@@ -16,10 +16,9 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
-	private static final String AUCTION_RESOURCE = "Auction";
 	private static final String ITEM_ID_AS_LOGIN = "auction-%s";
-	private static final String AUCTION_ID_FORMAT = ITEM_ID_AS_LOGIN + "@%s/"
-			+ AUCTION_RESOURCE;
+	private static final String AUCTION_RESOURCE = "Auction";
+	private static final String AUCTION_ID_FORMAT = ITEM_ID_AS_LOGIN + "@%s/" + AUCTION_RESOURCE;
 	private TextView statusText;
 
 	@Override
@@ -29,7 +28,7 @@ public class MainActivity extends Activity {
 		statusText = (TextView) findViewById(R.id.status);
 		statusText.setText(SniperStatus.STATUS_JOINING);
 
-		new JoinTask().execute("192.168.1.3", "sniper", "sniper", "item-54321");
+		new JoinTask().execute("localhost", "sniper", "sniper", "item-54321");
 	}
 
 	class JoinTask extends AsyncTask<String, Void, Void> {
@@ -51,21 +50,19 @@ public class MainActivity extends Activity {
 							@Override
 							public void processMessage(Chat chat,
 									Message message) {
-								statusText.post(new Runnable() {
-
+								Log.d("han", "message received by sniper");
+								runOnUiThread(new Runnable() {
 									@Override
 									public void run() {
-										statusText.setText(SniperStatus.STATUS_LOST);
-									}
-									
+										showStatus(SniperStatus.STATUS_LOST);
+									}									
 								});
 							}
 						});
+				Log.d("han", "chat created by sniper:" + auctionId(params[3], connection));
 				try {
-					Message m = new Message(auctionId(params[3], connection));
-					m.setBody("text");
-					chat.sendMessage(m);
-					Log.d("han", auctionId(params[3], connection));
+					chat.sendMessage(new Message());
+					Log.d("han", "message sent from sniper");
 				} catch (XMPPException e) {
 					e.printStackTrace();
 					Log.e("han", "send failed");
@@ -89,8 +86,14 @@ public class MainActivity extends Activity {
 					connectionConfiguration);
 			connection.connect();
 			connection.login(username, password, AUCTION_RESOURCE);
+			Log.d("han", "login:" + username);
 			return connection;
 		}
+	}
+
+	private void showStatus(String status) {
+		statusText.setText(status);
+		Log.d("han", "showStatus:" + status);
 	}
 
 	@Override

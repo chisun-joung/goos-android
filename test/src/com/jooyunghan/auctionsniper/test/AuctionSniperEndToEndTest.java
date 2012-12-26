@@ -4,9 +4,10 @@ import com.jooyunghan.auctionsniper.MainActivity;
 
 import android.test.ActivityInstrumentationTestCase2;
 
-public class AuctionSniperEndToEndTest extends ActivityInstrumentationTestCase2<MainActivity> {
-	private FakeAuctionServer auction;
-	private ApplicationRunner application;
+public class AuctionSniperEndToEndTest extends
+		ActivityInstrumentationTestCase2<MainActivity> {
+	private FakeAuctionServer auction = new FakeAuctionServer("item-54321");
+	private ApplicationRunner application = new ApplicationRunner();
 
 	public AuctionSniperEndToEndTest() {
 		super(MainActivity.class);
@@ -15,13 +16,12 @@ public class AuctionSniperEndToEndTest extends ActivityInstrumentationTestCase2<
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		auction = new FakeAuctionServer("item-54321");
-		application = new ApplicationRunner(getInstrumentation(), getActivity());
 	}
 
 	public void testSniperJoinsAuctionUntilAuctionCloses() throws Exception {
 		auction.startSellingItem();
-		application.startBiddingIn(auction);
+		application
+				.startBiddingIn(auction, getInstrumentation(), getActivity());
 		auction.hasReceivedJoinRequestFromSniper();
 		auction.announceClosed();
 		application.showsSniperHasLostAuction();

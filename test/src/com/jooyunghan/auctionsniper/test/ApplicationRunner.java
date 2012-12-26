@@ -6,14 +6,14 @@ import android.app.Instrumentation;
 import com.jooyunghan.auctionsniper.SniperStatus;
 
 public class ApplicationRunner {
-
 	private AuctionSniperDriver driver;
-	
-	public ApplicationRunner(Instrumentation inst, Activity activity) {
-		driver = new AuctionSniperDriver(inst, activity, 1000);
+
+	public ApplicationRunner() {
 	}
 
-	public void startBiddingIn(FakeAuctionServer auction) {
+	public void startBiddingIn(FakeAuctionServer auction,
+			Instrumentation instrumentation, Activity activity) {
+		driver = new AuctionSniperDriver(instrumentation, activity, 1000);
 		driver.showsSniperStatus(SniperStatus.STATUS_JOINING);
 	}
 
@@ -22,8 +22,9 @@ public class ApplicationRunner {
 	}
 
 	public void stop() {
-		// TODO Auto-generated method stub
-		
+		if (driver != null) {
+			driver.getCurrentActivity().finish();
+		}
 	}
 
 }
