@@ -8,7 +8,6 @@ import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Message;
 
 import android.util.Log;
 
@@ -67,7 +66,7 @@ public class FakeAuctionServer {
 	}
 
 	public void announceClosed() throws XMPPException {
-		currentChat.sendMessage(new Message());
+		currentChat.sendMessage("SOLVersion: 1.1; Event: CLOSE;");
 		Log.d("han", "message sent by fake");
 	}
 

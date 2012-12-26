@@ -12,7 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements AuctionEventListener {
+public class MainActivity extends Activity implements SniperListener {
 
 	private static final String ITEM_ID_AS_LOGIN = "auction-%s";
 	private static final String AUCTION_RESOURCE = "Auction";
@@ -50,7 +50,7 @@ public class MainActivity extends Activity implements AuctionEventListener {
 			throws XMPPException {
 		Chat chat = connection.getChatManager().createChat(
 				auctionId(itemId, connection),
-				new AuctionMessageTranslator(this));
+				new AuctionMessageTranslator(new AuctionSniper(this)));
 		Log.d("han", "chat created with " + chat.getParticipant());
 		this.notToBeGCd = chat;
 		chat.sendMessage(JOIN_COMMAND_FORMAT);
@@ -86,7 +86,7 @@ public class MainActivity extends Activity implements AuctionEventListener {
 	}
 
 	@Override
-	public void auctionClosed() {
+	public void sniperLost() {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -96,8 +96,7 @@ public class MainActivity extends Activity implements AuctionEventListener {
 	}
 
 	@Override
-	public void currentPrice(int price, int increment) {
-		// TODO Auto-generated method stub
+	public void sniperBidding() {
 		
 	}
 }
