@@ -6,6 +6,7 @@ import android.app.Instrumentation;
 import com.jooyunghan.auctionsniper.SniperStatus;
 
 public class ApplicationRunner {
+	public static final String SNIPER_XMPP_ID = "sniper";
 	private AuctionSniperDriver driver;
 
 	public ApplicationRunner() {
@@ -21,10 +22,15 @@ public class ApplicationRunner {
 		driver.showsSniperStatus(SniperStatus.STATUS_LOST);
 	}
 
+	public void hasShownSniperIsBidding() {
+		driver.showsSniperStatus(SniperStatus.STATUS_BIDDING);
+	}
+
 	public void stop() {
 		if (driver != null) {
 			driver.getCurrentActivity().finish();
 		}
 	}
+
 
 }

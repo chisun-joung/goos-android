@@ -22,7 +22,23 @@ public class AuctionSniperEndToEndTest extends
 		auction.startSellingItem();
 		application
 				.startBiddingIn(auction, getInstrumentation(), getActivity());
-		auction.hasReceivedJoinRequestFromSniper();
+		auction.hasReceivedJoinRequestFrom(ApplicationRunner.SNIPER_XMPP_ID);
+		auction.announceClosed();
+		application.showsSniperHasLostAuction();
+	}
+
+	public void testSniperMakesAHigherBidButLoses() throws Exception {
+		auction.startSellingItem();
+
+		application
+				.startBiddingIn(auction, getInstrumentation(), getActivity());
+		auction.hasReceivedJoinRequestFrom(ApplicationRunner.SNIPER_XMPP_ID);
+
+		auction.reportPrice(1000, 98, "other bidder");
+		application.hasShownSniperIsBidding();
+
+		auction.hasReceivedBid(1098, ApplicationRunner.SNIPER_XMPP_ID);
+
 		auction.announceClosed();
 		application.showsSniperHasLostAuction();
 	}

@@ -18,8 +18,12 @@ public class MainActivity extends Activity {
 
 	private static final String ITEM_ID_AS_LOGIN = "auction-%s";
 	private static final String AUCTION_RESOURCE = "Auction";
-	private static final String AUCTION_ID_FORMAT = ITEM_ID_AS_LOGIN + "@%s/" + AUCTION_RESOURCE;
+	private static final String AUCTION_ID_FORMAT = ITEM_ID_AS_LOGIN + "@%s/"
+			+ AUCTION_RESOURCE;
 	private TextView statusText;
+	public Chat notToBeGCd;
+	public static final String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
+	public static final String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,63 +36,53 @@ public class MainActivity extends Activity {
 	}
 
 	class JoinTask extends AsyncTask<String, Void, Void> {
-
 		@Override
 		protected Void doInBackground(String... params) {
-			XMPPConnection connection = null;
 			try {
-				connection = connectTo(params[0], params[1], params[2]);
+				joinAuction(connectTo(params[0], params[1], params[2]),
+						params[3]);
 			} catch (XMPPException e1) {
 				e1.printStackTrace();
-				Log.e("han", "connection failed");
 			}
-			if (connection != null) {
-				Chat chat = connection.getChatManager().createChat(
-						auctionId(params[3], connection),
-						new MessageListener() {
-
-							@Override
-							public void processMessage(Chat chat,
-									Message message) {
-								Log.d("han", "message received by sniper");
-								runOnUiThread(new Runnable() {
-									@Override
-									public void run() {
-										showStatus(SniperStatus.STATUS_LOST);
-									}									
-								});
-							}
-						});
-				Log.d("han", "chat created by sniper:" + auctionId(params[3], connection));
-				try {
-					chat.sendMessage(new Message());
-					Log.d("han", "message sent from sniper");
-				} catch (XMPPException e) {
-					e.printStackTrace();
-					Log.e("han", "send failed");
-				}
-			}
-
 			return null;
 		}
+	}
 
-		private String auctionId(String itemId, XMPPConnection connection) {
-			return String.format(AUCTION_ID_FORMAT, itemId,
-					connection.getServiceName());
-		}
+	private void joinAuction(XMPPConnection connection, String itemId)
+			throws XMPPException {
+		Chat chat = connection.getChatManager().createChat(
+				auctionId(itemId, connection), new MessageListener() {
+					@Override
+					public void processMessage(Chat chat, Message message) {
+						Log.d("han", "message received by sniper");
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								showStatus(SniperStatus.STATUS_LOST);
+							}
+						});
+					}
+				});
+		Log.d("han", "chat created with " + chat.getParticipant());
+		this.notToBeGCd = chat;
+		chat.sendMessage(JOIN_COMMAND_FORMAT);
+	}
 
-		private XMPPConnection connectTo(String host, String username,
-				String password) throws XMPPException {
+	private String auctionId(String itemId, XMPPConnection connection) {
+		return String.format(AUCTION_ID_FORMAT, itemId,
+				connection.getServiceName());
+	}
 
-			ConnectionConfiguration connectionConfiguration = new ConnectionConfiguration(
-					host, 5222);
-			XMPPConnection connection = new XMPPConnection(
-					connectionConfiguration);
-			connection.connect();
-			connection.login(username, password, AUCTION_RESOURCE);
-			Log.d("han", "login:" + username);
-			return connection;
-		}
+	private XMPPConnection connectTo(String host, String username,
+			String password) throws XMPPException {
+
+		ConnectionConfiguration connectionConfiguration = new ConnectionConfiguration(
+				host, 5222);
+		XMPPConnection connection = new XMPPConnection(connectionConfiguration);
+		connection.connect();
+		connection.login(username, password, AUCTION_RESOURCE);
+		Log.d("han", "login:" + username);
+		return connection;
 	}
 
 	private void showStatus(String status) {
