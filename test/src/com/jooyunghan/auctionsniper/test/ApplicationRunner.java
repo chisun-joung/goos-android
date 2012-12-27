@@ -22,8 +22,16 @@ public class ApplicationRunner {
 		driver.showsSniperStatus(SniperStatus.STATUS_LOST);
 	}
 
+	public void showsSniperHasWonAuction() {
+		driver.showsSniperStatus(SniperStatus.STATUS_WON);
+	}
+
 	public void hasShownSniperIsBidding() {
 		driver.showsSniperStatus(SniperStatus.STATUS_BIDDING);
+	}
+
+	public void hasShownSniperIsWinning() {
+		driver.showsSniperStatus(SniperStatus.STATUS_WINNING);
 	}
 
 	public void stop() {
@@ -31,6 +39,7 @@ public class ApplicationRunner {
 			driver.getCurrentActivity().finish();
 		}
 	}
+
 
 
 }
