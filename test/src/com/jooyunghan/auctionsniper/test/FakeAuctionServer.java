@@ -39,7 +39,6 @@ public class FakeAuctionServer {
 		connection.getChatManager().addChatListener(new ChatManagerListener() {
 			@Override
 			public void chatCreated(Chat chat, boolean locallyCreated) {
-				Log.d("han", "chat created : " + chat.getParticipant());
 				currentChat = chat;
 				chat.addMessageListener(messageListener);
 			}
@@ -61,8 +60,7 @@ public class FakeAuctionServer {
 	private void receivesAMessageMatching(String sniperId, String format)
 			throws InterruptedException {
 		messageListener.receivesAMessage(Matchers.equalTo(format));
-		assertThat(currentChat.getParticipant(),
-				Matchers.startsWith(sniperId + "@"));
+		assertThat(currentChat.getParticipant(), Matchers.equalTo(sniperId));
 	}
 
 	public void announceClosed() throws XMPPException {
@@ -79,5 +77,9 @@ public class FakeAuctionServer {
 
 	public void stop() {
 		// connection.disconnect();
+	}
+
+	public String sniperId() {
+		return currentChat.getParticipant();
 	}
 }

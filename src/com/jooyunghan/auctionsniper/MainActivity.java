@@ -36,8 +36,9 @@ public class MainActivity extends Activity {
 		this.notToBeGCd = chat;
 
 		Auction auction = new XMPPAuction(chat);
-		chat.addMessageListener(new AuctionMessageTranslator(new AuctionSniper(
-				auction, new SniperStateDisplayer(this))));
+		chat.addMessageListener(new AuctionMessageTranslator(connection
+				.getUser(), new AuctionSniper(auction,
+				new SniperStateDisplayer(this))));
 		auction.join();
 	}
 
