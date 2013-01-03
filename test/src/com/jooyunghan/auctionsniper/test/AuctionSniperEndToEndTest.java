@@ -1,13 +1,15 @@
 package com.jooyunghan.auctionsniper.test;
 
-import com.jooyunghan.auctionsniper.MainActivity;
-
 import android.test.ActivityInstrumentationTestCase2;
+
+import com.jayway.android.robotium.solo.Solo;
+import com.jooyunghan.auctionsniper.MainActivity;
 
 public class AuctionSniperEndToEndTest extends
 		ActivityInstrumentationTestCase2<MainActivity> {
 	private FakeAuctionServer auction = new FakeAuctionServer("item-54321");
 	private ApplicationRunner application = new ApplicationRunner();
+	private Solo solo;
 
 	public AuctionSniperEndToEndTest() {
 		super(MainActivity.class);
@@ -16,12 +18,12 @@ public class AuctionSniperEndToEndTest extends
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
+		this.solo = new Solo(getInstrumentation(), getActivity());
 	}
 
 	public void testSniperJoinsAuctionUntilAuctionCloses() throws Exception {
 		auction.startSellingItem();
-		application
-				.startBiddingIn(auction, getInstrumentation(), getActivity());
+		application.startBiddingIn(auction, solo);
 		auction.hasReceivedJoinRequestFrom(auction.sniperId());
 		auction.announceClosed();
 		application.showsSniperHasLostAuction();
@@ -30,8 +32,7 @@ public class AuctionSniperEndToEndTest extends
 	public void testSniperMakesAHigherBidButLoses() throws Exception {
 		auction.startSellingItem();
 
-		application
-				.startBiddingIn(auction, getInstrumentation(), getActivity());
+		application.startBiddingIn(auction, solo);
 		auction.hasReceivedJoinRequestFrom(auction.sniperId());
 
 		auction.reportPrice(1000, 98, "other bidder");
@@ -45,8 +46,8 @@ public class AuctionSniperEndToEndTest extends
 
 	public void testSniperWinsAnAuctionByBiddingHigher() throws Exception {
 		auction.startSellingItem();
-		application
-				.startBiddingIn(auction, getInstrumentation(), getActivity());
+
+		application.startBiddingIn(auction, solo);
 		auction.hasReceivedJoinRequestFrom(auction.sniperId());
 
 		auction.reportPrice(1000, 98, "other bidder");

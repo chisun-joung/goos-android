@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -27,7 +28,6 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		statusText = (TextView) findViewById(R.id.status);
 		statusText.setText(SniperStatus.STATUS_JOINING);
-		new JoinTask().execute("localhost", "sniper", "sniper", "item-54321");
 	}
 
 	private void joinAuction(XMPPConnection connection, String itemId) {
@@ -61,9 +61,17 @@ public class MainActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.menu_join) {
+			new JoinTask().execute("localhost", "sniper", "sniper", "item-54321");
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	class JoinTask extends AsyncTask<String, Void, Void> {

@@ -1,8 +1,6 @@
 package com.jooyunghan.auctionsniper.test;
 
-import android.app.Activity;
-import android.app.Instrumentation;
-
+import com.jayway.android.robotium.solo.Solo;
 import com.jooyunghan.auctionsniper.SniperStatus;
 
 public class ApplicationRunner {
@@ -11,9 +9,9 @@ public class ApplicationRunner {
 	public ApplicationRunner() {
 	}
 
-	public void startBiddingIn(FakeAuctionServer auction,
-			Instrumentation instrumentation, Activity activity) {
-		driver = new AuctionSniperDriver(instrumentation, activity, 1000);
+	public void startBiddingIn(FakeAuctionServer auction, Solo solo) {
+		solo.clickOnMenuItem("Join");
+		driver = new AuctionSniperDriver(solo, 1000);
 		driver.showsSniperStatus(SniperStatus.STATUS_JOINING);
 	}
 
@@ -35,7 +33,7 @@ public class ApplicationRunner {
 
 	public void stop() {
 		if (driver != null) {
-			driver.getCurrentActivity().finish();
+			driver.dispose();
 		}
 	}
 }
