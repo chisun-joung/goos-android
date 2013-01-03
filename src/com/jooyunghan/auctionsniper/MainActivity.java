@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
 		Auction auction = new XMPPAuction(chat);
 		chat.addMessageListener(new AuctionMessageTranslator(connection
 				.getUser(), new AuctionSniper(itemId, auction,
-				new SniperStateDisplayer(this, adapter))));
+				new UIThreadSniperListener(this, adapter))));
 		auction.join();
 	}
 

@@ -31,9 +31,12 @@ public class AuctionSniperTest extends TestCase {
 	}
 
 	public void testReportsLostIfAuctionClosesImmediately() throws Exception {
-		context.checking(new Expectations() {{
-			atLeast(1).of(sniperListener).sniperStateChanged(new SniperSnapshot(ITEM_ID, 0, 0, SniperState.LOST));
-		}});
+		context.checking(new Expectations() {
+			{
+				atLeast(1).of(sniperListener).sniperStateChanged(
+						new SniperSnapshot(ITEM_ID, 0, 0, SniperState.LOST));
+			}
+		});
 		sniper.auctionClosed();
 		context.assertIsSatisfied();
 	}
@@ -77,6 +80,25 @@ public class AuctionSniperTest extends TestCase {
 		context.assertIsSatisfied();
 	}
 
+	public void testBidsHigherAndReportsBiddingWhenNewPriceArrives()
+			throws Exception {
+		final int price = 1001;
+		final int increment = 25;
+		final int bid = price + increment;
+
+		context.checking(new Expectations() {
+			{
+				one(auction).bid(bid);
+				atLeast(1).of(sniperListener).sniperStateChanged(
+						new SniperSnapshot(ITEM_ID, price, bid,
+								SniperState.BIDDING));
+			}
+		});
+
+		sniper.currentPrice(price, increment, PriceSource.FromOtherBidder);
+		context.assertIsSatisfied();
+	}
+
 	private Matcher<SniperSnapshot> aSniperThatIs(final SniperState state) {
 		return new FeatureMatcher<SniperSnapshot, SniperState>(equalTo(state),
 				"sniper that is ", "was") {
@@ -85,22 +107,5 @@ public class AuctionSniperTest extends TestCase {
 				return actual.state;
 			}
 		};
-	}
-
-	public void testBidsHigherAndReportsBiddingWhenNewPriceArrives()
-			throws Exception {
-		final int price = 1001;
-		final int increment = 25;
-		final int bid = price + increment;
-		
-		context.checking(new Expectations() {
-			{
-				one(auction).bid(bid);
-				atLeast(1).of(sniperListener).sniperStateChanged(new SniperSnapshot(ITEM_ID, price, bid, SniperState.BIDDING));
-			}
-		});
-
-		sniper.currentPrice(price, increment, PriceSource.FromOtherBidder);
-		context.assertIsSatisfied();
 	}
 }

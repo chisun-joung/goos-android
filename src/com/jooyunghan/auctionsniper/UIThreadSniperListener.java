@@ -2,13 +2,13 @@ package com.jooyunghan.auctionsniper;
 
 import android.app.Activity;
 
-public class SniperStateDisplayer implements SniperListener {
-	private SnipersAdapter adapter;
+public class UIThreadSniperListener implements SniperListener {
+	private SniperListener listener;
 	private Activity activity;
 
-	public SniperStateDisplayer(Activity activity, SnipersAdapter adapter) {
+	public UIThreadSniperListener(Activity activity, SniperListener listener) {
 		this.activity = activity;
-		this.adapter = adapter;
+		this.listener = listener;
 	}
 
 	@Override
@@ -16,7 +16,7 @@ public class SniperStateDisplayer implements SniperListener {
 		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				adapter.sniperStateChanged(state);
+				listener.sniperStateChanged(state);
 			}
 		});
 	}

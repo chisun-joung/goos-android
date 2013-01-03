@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class SnipersAdapter extends BaseAdapter {
+public class SnipersAdapter extends BaseAdapter implements SniperListener {
 
 	private Context context;
 	private SniperSnapshot snapshot;
@@ -52,6 +52,7 @@ public class SnipersAdapter extends BaseAdapter {
 		tv.setText(fieldValue);
 	}
 
+	@Override
 	public void sniperStateChanged(SniperSnapshot snapshot) {
 		Log.d("han", "sniperStatesChanged(" + snapshot + ")");
 		this.snapshot = snapshot;
