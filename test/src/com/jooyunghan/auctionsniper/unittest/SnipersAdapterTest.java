@@ -7,7 +7,6 @@ import android.test.AndroidTestCase;
 
 import com.jooyunghan.auctionsniper.SniperSnapshot;
 import com.jooyunghan.auctionsniper.SniperState;
-import com.jooyunghan.auctionsniper.SniperStatus;
 import com.jooyunghan.auctionsniper.SnipersAdapter;
 
 public class SnipersAdapterTest extends AndroidTestCase {
@@ -18,11 +17,11 @@ public class SnipersAdapterTest extends AndroidTestCase {
 		SnipersAdapter adapter = new SnipersAdapter(getContext());
 		adapter.registerDataSetObserver(observer);
 		
-		adapter.sniperStatesChanged(new SniperSnapshot(ITEM_ID, 555, 666, SniperState.BIDDING), SniperStatus.STATUS_BIDDING);
+		adapter.sniperStateChanged(new SniperSnapshot(ITEM_ID, 555, 666, SniperState.BIDDING));
 		
 		verify(observer).onChanged();
 		assertEquals("item-id", adapter.getItemId());
 		assertEquals("555/666", adapter.getDetail());
-		assertEquals(SniperStatus.STATUS_BIDDING, adapter.getState());
+		assertEquals("Bidding", adapter.getState());
 	}
 }

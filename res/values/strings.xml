@@ -6,5 +6,9 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_join">Join</string>
     <string name="status_joining">Joining</string>
+    <string name="status_bidding">Bidding</string>
+    <string name="status_winning">Winning</string>
+    <string name="status_lost">Lost</string>
+    <string name="status_won">Won</string>
 
 </resources>

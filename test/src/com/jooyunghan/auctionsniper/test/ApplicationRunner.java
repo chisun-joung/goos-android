@@ -1,7 +1,6 @@
 package com.jooyunghan.auctionsniper.test;
 
 import com.jayway.android.robotium.solo.Solo;
-import com.jooyunghan.auctionsniper.SniperStatus;
 
 public class ApplicationRunner {
 	private AuctionSniperDriver driver;
@@ -14,24 +13,23 @@ public class ApplicationRunner {
 		itemId = auction.getItemId();
 		solo.clickOnMenuItem("Join");
 		driver = new AuctionSniperDriver(solo, 1000);
-		driver.showsSniperState(SniperStatus.STATUS_JOINING);
+		driver.showsSniperState(itemId, 0, 0, "Joining");
 	}
 
 	public void showsSniperHasLostAuction() {
-		driver.showsSniperState(SniperStatus.STATUS_LOST);
+		driver.showsSniperState("Lost");
 	}
 
 	public void showsSniperHasWonAuction(int lastPrice) {
-		driver.showsSniperState(SniperStatus.STATUS_WON);
+		driver.showsSniperState(itemId, lastPrice, lastPrice, "Won");
 	}
 
 	public void hasShownSniperIsBidding(int lastPrice, int lastBid) {
-		driver.showsSniperState(itemId, lastPrice, lastBid,
-				SniperStatus.STATUS_BIDDING);
+		driver.showsSniperState(itemId, lastPrice, lastBid, "Bidding");
 	}
 
 	public void hasShownSniperIsWinning(int lastPrice) {
-		driver.showsSniperState(SniperStatus.STATUS_WINNING);
+		driver.showsSniperState(itemId, lastPrice, lastPrice, "Winning");
 	}
 
 	public void stop() {

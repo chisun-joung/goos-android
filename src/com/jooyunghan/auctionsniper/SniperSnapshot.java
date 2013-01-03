@@ -9,7 +9,7 @@ public class SniperSnapshot {
 	public final String itemId;
 	public final int lastPrice;
 	public final int lastBid;
-	private SniperState state;
+	public final SniperState state;
 
 	public SniperSnapshot(String itemId, int price, int bid, SniperState state) {
 		this.itemId = itemId;
@@ -31,5 +31,21 @@ public class SniperSnapshot {
 	@Override
 	public int hashCode() {
 		return HashCodeBuilder.reflectionHashCode(this);
+	}
+
+	public static SniperSnapshot join(String itemId) {
+		return new SniperSnapshot(itemId, 0, 0, SniperState.JOINING);
+	}
+
+	public SniperSnapshot closed() {
+		return new SniperSnapshot(itemId, lastPrice, lastBid, state.whenAuctionClosed());
+	}
+
+	public SniperSnapshot winning(int price) {
+		return new SniperSnapshot(itemId, price, price, SniperState.WINNING);
+	}
+
+	public SniperSnapshot bidding(int price, int bid) {
+		return new SniperSnapshot(itemId, price, bid, SniperState.BIDDING);
 	}
 }

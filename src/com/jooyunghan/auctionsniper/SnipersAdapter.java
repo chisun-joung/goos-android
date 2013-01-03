@@ -11,12 +11,10 @@ import android.widget.TextView;
 public class SnipersAdapter extends BaseAdapter {
 
 	private Context context;
-	private String state;
 	private SniperSnapshot snapshot;
 
 	public SnipersAdapter(Context context) {
 		this.context = context;
-		state = context.getString(R.string.status_joining);
 		snapshot = new SniperSnapshot("", 0, 0, SniperState.JOINING);
 	}
 
@@ -27,7 +25,7 @@ public class SnipersAdapter extends BaseAdapter {
 
 	@Override
 	public Object getItem(int position) {
-		return state;
+		return snapshot;
 	}
 
 	@Override
@@ -54,15 +52,8 @@ public class SnipersAdapter extends BaseAdapter {
 		tv.setText(fieldValue);
 	}
 
-	public void showState(String state) {
-		Log.d("han", "showStatus(" + state + ")");
-		this.state = state;
-		this.notifyDataSetChanged();
-	}
-
-	public void sniperStatesChanged(SniperSnapshot snapshot, String state) {
-		Log.d("han", "sniperStatesChanged(" + snapshot + ", " + state + ")");
-		this.state = state;
+	public void sniperStateChanged(SniperSnapshot snapshot) {
+		Log.d("han", "sniperStatesChanged(" + snapshot + ")");
 		this.snapshot = snapshot;
 		this.notifyDataSetChanged();
 	}
@@ -76,7 +67,19 @@ public class SnipersAdapter extends BaseAdapter {
 	}
 
 	public String getState() {
-		return state;
+		switch (snapshot.state) {
+		case JOINING: 
+			return context.getString(R.string.status_joining);
+		case BIDDING: 
+			return context.getString(R.string.status_bidding);
+		case WINNING: 
+			return context.getString(R.string.status_winning);
+		case LOST: 
+			return context.getString(R.string.status_lost);
+		case WON: 
+			return context.getString(R.string.status_won);
+		}
+		throw new IllegalArgumentException("Unknown state:" + snapshot.state);
 	}
 
 }
