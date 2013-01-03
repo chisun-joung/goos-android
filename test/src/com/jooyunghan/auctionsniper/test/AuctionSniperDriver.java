@@ -1,5 +1,7 @@
 package com.jooyunghan.auctionsniper.test;
 
+import static junit.framework.Assert.assertTrue;
+
 import com.jayway.android.robotium.solo.Solo;
 import com.jooyunghan.auctionsniper.MainActivity;
 
@@ -13,8 +15,10 @@ public class AuctionSniperDriver {
 		solo.assertCurrentActivity("activity not launched", MainActivity.class);
 	}
 
-	public void showsSniperStatus(String statusText) {
-		solo.waitForText(statusText, 1, timeout);
+	public void showsSniperStatus(String itemId, int lastPrice, int lastBid, String statusText) {
+		assertTrue(solo.waitForText(itemId, 1, timeout));
+		assertTrue(solo.waitForText(String.format("%d/%d", lastPrice, lastBid), 1, timeout));
+		assertTrue(solo.waitForText(statusText, 1, timeout));
 	}
 
 	public void dispose() {

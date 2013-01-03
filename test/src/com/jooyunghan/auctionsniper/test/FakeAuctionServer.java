@@ -82,4 +82,8 @@ public class FakeAuctionServer {
 	public String sniperId() {
 		return currentChat.getParticipant();
 	}
+
+	public String getItemId() {
+		return itemId;
+	}
 }

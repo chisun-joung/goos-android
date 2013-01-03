@@ -1,5 +1,6 @@
 package com.jooyunghan.auctionsniper.unittest;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -12,11 +13,13 @@ import com.jooyunghan.auctionsniper.Auction;
 import com.jooyunghan.auctionsniper.AuctionEventListener.PriceSource;
 import com.jooyunghan.auctionsniper.AuctionSniper;
 import com.jooyunghan.auctionsniper.SniperListener;
+import com.jooyunghan.auctionsniper.SniperState;
 
 public class AuctionSniperTest extends TestCase {
+	private static final String ITEM_ID = "item-id";
 	private final Auction auction = mock(Auction.class);
 	private final SniperListener sniperListener = mock(SniperListener.class);
-	private final AuctionSniper sniper = new AuctionSniper(auction, sniperListener);
+	private final AuctionSniper sniper = new AuctionSniper(ITEM_ID, auction, sniperListener);
 
 	public void testReportsLostIfAuctionClosesImmediately() throws Exception {
 		sniper.auctionClosed();
@@ -27,7 +30,7 @@ public class AuctionSniperTest extends TestCase {
 		sniper.currentPrice(123, 45, PriceSource.FromOtherBidder);
 		sniper.auctionClosed();
 		InOrder inOrder = inOrder(sniperListener);
-		inOrder.verify(sniperListener, atLeastOnce()).sniperBidding();
+		inOrder.verify(sniperListener, atLeastOnce()).sniperBidding(any(SniperState.class));
 		inOrder.verify(sniperListener, atLeastOnce()).sniperLost();
 	}
 	
@@ -48,10 +51,11 @@ public class AuctionSniperTest extends TestCase {
 			throws Exception {
 		final int price = 1001;
 		final int increment = 25;
+		final int bid = price + increment;
 
 		sniper.currentPrice(price, increment, PriceSource.FromOtherBidder);
 
-		verify(sniperListener, atLeastOnce()).sniperBidding();
-		verify(auction).bid(price + increment);
+		verify(sniperListener, atLeastOnce()).sniperBidding(new SniperState(ITEM_ID, price, bid));
+		verify(auction).bid(bid);
 	}
 }

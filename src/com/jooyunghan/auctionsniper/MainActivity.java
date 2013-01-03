@@ -39,7 +39,7 @@ public class MainActivity extends Activity {
 
 		Auction auction = new XMPPAuction(chat);
 		chat.addMessageListener(new AuctionMessageTranslator(connection
-				.getUser(), new AuctionSniper(auction,
+				.getUser(), new AuctionSniper(itemId, auction,
 				new SniperStateDisplayer(adapter))));
 		auction.join();
 	}

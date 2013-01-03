@@ -36,7 +36,7 @@ public class AuctionSniperEndToEndTest extends
 		auction.hasReceivedJoinRequestFrom(auction.sniperId());
 
 		auction.reportPrice(1000, 98, "other bidder");
-		application.hasShownSniperIsBidding();
+		application.hasShownSniperIsBidding(1000, 1098);
 
 		auction.hasReceivedBid(1098, auction.sniperId());
 
@@ -51,15 +51,15 @@ public class AuctionSniperEndToEndTest extends
 		auction.hasReceivedJoinRequestFrom(auction.sniperId());
 
 		auction.reportPrice(1000, 98, "other bidder");
-		application.hasShownSniperIsBidding();
+		application.hasShownSniperIsBidding(1000, 1098);
 
 		auction.hasReceivedBid(1098, auction.sniperId());
 
 		auction.reportPrice(1098, 97, auction.sniperId());
-		application.hasShownSniperIsWinning();
+		application.hasShownSniperIsWinning(1098);
 
 		auction.announceClosed();
-		application.showsSniperHasWonAuction();
+		application.showsSniperHasWonAuction(1098);
 	}
 
 	@Override
