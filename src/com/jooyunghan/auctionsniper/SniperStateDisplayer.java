@@ -1,22 +1,17 @@
 package com.jooyunghan.auctionsniper;
 
-import android.app.Activity;
-import android.widget.TextView;
-
 public class SniperStateDisplayer implements SniperListener {
-	private TextView statusText;
-	private Activity activity;
+	private SnipersAdapter adapter;
 
-	public SniperStateDisplayer(Activity activity) {
-		this.activity = activity;
-		statusText = (TextView) activity.findViewById(R.id.status);
+	public SniperStateDisplayer(SnipersAdapter adapter) {
+		this.adapter = adapter;
 	}
 
 	@Override
 	public void sniperLost() {
 		showStatus(SniperStatus.STATUS_LOST);
 	}
-	
+
 	@Override
 	public void sniperWon() {
 		showStatus(SniperStatus.STATUS_WON);
@@ -33,11 +28,6 @@ public class SniperStateDisplayer implements SniperListener {
 	}
 
 	private void showStatus(final String status) {
-		activity.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				statusText.setText(status);
-			}
-		});
+		adapter.showStatus(status);
 	}
 }

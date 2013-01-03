@@ -11,7 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.widget.ListView;
 
 public class MainActivity extends Activity {
 
@@ -19,15 +19,17 @@ public class MainActivity extends Activity {
 	private static final String AUCTION_RESOURCE = "Auction";
 	private static final String AUCTION_ID_FORMAT = ITEM_ID_AS_LOGIN + "@%s/"
 			+ AUCTION_RESOURCE;
-	private TextView statusText;
+	private ListView list;
 	public Chat notToBeGCd;
+	private SnipersAdapter adapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		statusText = (TextView) findViewById(R.id.status);
-		statusText.setText(SniperStatus.STATUS_JOINING);
+		list = (ListView) findViewById(R.id.list);
+		adapter = new SnipersAdapter(this);
+		list.setAdapter(adapter);
 	}
 
 	private void joinAuction(XMPPConnection connection, String itemId) {
@@ -38,7 +40,7 @@ public class MainActivity extends Activity {
 		Auction auction = new XMPPAuction(chat);
 		chat.addMessageListener(new AuctionMessageTranslator(connection
 				.getUser(), new AuctionSniper(auction,
-				new SniperStateDisplayer(this))));
+				new SniperStateDisplayer(adapter))));
 		auction.join();
 	}
 
@@ -68,7 +70,8 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.menu_join) {
-			new JoinTask().execute("localhost", "sniper", "sniper", "item-54321");
+			new JoinTask().execute("localhost", "sniper", "sniper",
+					"item-54321");
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
