@@ -4,13 +4,13 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class SniperState {
+public class SniperSnapshot {
 
 	public final String itemId;
 	public final int lastPrice;
 	public final int lastBid;
 
-	public SniperState(String itemId, int price, int bid) {
+	public SniperSnapshot(String itemId, int price, int bid) {
 		this.itemId = itemId;
 		this.lastPrice = price;
 		this.lastBid = bid;

@@ -11,13 +11,13 @@ import android.widget.TextView;
 public class SnipersAdapter extends BaseAdapter {
 
 	private Context context;
-	private String status;
-	private SniperState state;
+	private String state;
+	private SniperSnapshot snapshot;
 
 	public SnipersAdapter(Context context) {
 		this.context = context;
-		status = context.getString(R.string.status_joining);
-		state = new SniperState("", 0, 0);
+		state = context.getString(R.string.status_joining);
+		snapshot = new SniperSnapshot("", 0, 0);
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class SnipersAdapter extends BaseAdapter {
 
 	@Override
 	public Object getItem(int position) {
-		return status;
+		return state;
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class SnipersAdapter extends BaseAdapter {
 		}
 		setField(convertView, R.id.text_item_id, getItemId());
 		setField(convertView, R.id.text_detail, getDetail());
-		setField(convertView, R.id.text_status, getStatus());
+		setField(convertView, R.id.text_status, getState());
 
 		return convertView;
 	}
@@ -54,29 +54,29 @@ public class SnipersAdapter extends BaseAdapter {
 		tv.setText(fieldValue);
 	}
 
-	public void showStatus(String status) {
-		Log.d("han", "showStatus(" + status + ")");
-		this.status = status;
-		this.notifyDataSetChanged();
-	}
-
-	public void sniperStatusChanged(SniperState state, String status) {
-		Log.d("han", "sniperStatusChanged(" + state + ", " + status + ")");
-		this.status = status;
+	public void showState(String state) {
+		Log.d("han", "showStatus(" + state + ")");
 		this.state = state;
 		this.notifyDataSetChanged();
 	}
 
+	public void sniperStatesChanged(SniperSnapshot snapshot, String state) {
+		Log.d("han", "sniperStatesChanged(" + snapshot + ", " + state + ")");
+		this.state = state;
+		this.snapshot = snapshot;
+		this.notifyDataSetChanged();
+	}
+
 	public String getItemId() {
-		return state.itemId;
+		return snapshot.itemId;
 	}
 
 	public String getDetail() {
-		return String.format("%d/%d", state.lastPrice, state.lastBid);
+		return String.format("%d/%d", snapshot.lastPrice, snapshot.lastBid);
 	}
 
-	public String getStatus() {
-		return status;
+	public String getState() {
+		return state;
 	}
 
 }

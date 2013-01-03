@@ -13,7 +13,7 @@ import com.jooyunghan.auctionsniper.Auction;
 import com.jooyunghan.auctionsniper.AuctionEventListener.PriceSource;
 import com.jooyunghan.auctionsniper.AuctionSniper;
 import com.jooyunghan.auctionsniper.SniperListener;
-import com.jooyunghan.auctionsniper.SniperState;
+import com.jooyunghan.auctionsniper.SniperSnapshot;
 
 public class AuctionSniperTest extends TestCase {
 	private static final String ITEM_ID = "item-id";
@@ -30,7 +30,7 @@ public class AuctionSniperTest extends TestCase {
 		sniper.currentPrice(123, 45, PriceSource.FromOtherBidder);
 		sniper.auctionClosed();
 		InOrder inOrder = inOrder(sniperListener);
-		inOrder.verify(sniperListener, atLeastOnce()).sniperBidding(any(SniperState.class));
+		inOrder.verify(sniperListener, atLeastOnce()).sniperBidding(any(SniperSnapshot.class));
 		inOrder.verify(sniperListener, atLeastOnce()).sniperLost();
 	}
 	
@@ -55,7 +55,7 @@ public class AuctionSniperTest extends TestCase {
 
 		sniper.currentPrice(price, increment, PriceSource.FromOtherBidder);
 
-		verify(sniperListener, atLeastOnce()).sniperBidding(new SniperState(ITEM_ID, price, bid));
+		verify(sniperListener, atLeastOnce()).sniperBidding(new SniperSnapshot(ITEM_ID, price, bid));
 		verify(auction).bid(bid);
 	}
 }

@@ -5,7 +5,7 @@ import static org.mockito.Mockito.verify;
 import android.database.DataSetObserver;
 import android.test.AndroidTestCase;
 
-import com.jooyunghan.auctionsniper.SniperState;
+import com.jooyunghan.auctionsniper.SniperSnapshot;
 import com.jooyunghan.auctionsniper.SniperStatus;
 import com.jooyunghan.auctionsniper.SnipersAdapter;
 
@@ -17,11 +17,11 @@ public class SnipersAdapterTest extends AndroidTestCase {
 		SnipersAdapter adapter = new SnipersAdapter(getContext());
 		adapter.registerDataSetObserver(observer);
 		
-		adapter.sniperStatusChanged(new SniperState(ITEM_ID, 555, 666), SniperStatus.STATUS_BIDDING);
+		adapter.sniperStatesChanged(new SniperSnapshot(ITEM_ID, 555, 666), SniperStatus.STATUS_BIDDING);
 		
 		verify(observer).onChanged();
 		assertEquals("item-id", adapter.getItemId());
 		assertEquals("555/666", adapter.getDetail());
-		assertEquals(SniperStatus.STATUS_BIDDING, adapter.getStatus());
+		assertEquals(SniperStatus.STATUS_BIDDING, adapter.getState());
 	}
 }

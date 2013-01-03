@@ -13,34 +13,34 @@ public class SniperStateDisplayer implements SniperListener {
 
 	@Override
 	public void sniperLost() {
-		showStatus(SniperStatus.STATUS_LOST);
+		showState(SniperStatus.STATUS_LOST);
 	}
 
 	@Override
 	public void sniperWon() {
-		showStatus(SniperStatus.STATUS_WON);
+		showState(SniperStatus.STATUS_WON);
 	}
 
 	@Override
-	public void sniperBidding(final SniperState state) {
+	public void sniperBidding(final SniperSnapshot state) {
 		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				adapter.sniperStatusChanged(state, SniperStatus.STATUS_BIDDING);
+				adapter.sniperStatesChanged(state, SniperStatus.STATUS_BIDDING);
 			}
 		});
 	}
 
 	@Override
 	public void sniperWinning() {
-		showStatus(SniperStatus.STATUS_WINNING);
+		showState(SniperStatus.STATUS_WINNING);
 	}
 
-	private void showStatus(final String status) {
+	private void showState(final String state) {
 		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				adapter.showStatus(status);
+				adapter.showState(state);
 			}
 		});
 	}
