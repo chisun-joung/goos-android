@@ -14,26 +14,29 @@ import com.jooyunghan.auctionsniper.AuctionEventListener.PriceSource;
 import com.jooyunghan.auctionsniper.AuctionSniper;
 import com.jooyunghan.auctionsniper.SniperListener;
 import com.jooyunghan.auctionsniper.SniperSnapshot;
+import com.jooyunghan.auctionsniper.SniperState;
 
 public class AuctionSniperTest extends TestCase {
 	private static final String ITEM_ID = "item-id";
 	private final Auction auction = mock(Auction.class);
 	private final SniperListener sniperListener = mock(SniperListener.class);
-	private final AuctionSniper sniper = new AuctionSniper(ITEM_ID, auction, sniperListener);
+	private final AuctionSniper sniper = new AuctionSniper(ITEM_ID, auction,
+			sniperListener);
 
 	public void testReportsLostIfAuctionClosesImmediately() throws Exception {
 		sniper.auctionClosed();
 		verify(sniperListener, atLeastOnce()).sniperLost();
 	}
-	
+
 	public void testReportsLostIfAuctionClosesWhenBidding() throws Exception {
 		sniper.currentPrice(123, 45, PriceSource.FromOtherBidder);
 		sniper.auctionClosed();
 		InOrder inOrder = inOrder(sniperListener);
-		inOrder.verify(sniperListener, atLeastOnce()).sniperBidding(any(SniperSnapshot.class));
+		inOrder.verify(sniperListener, atLeastOnce()).sniperBidding(
+				any(SniperSnapshot.class));
 		inOrder.verify(sniperListener, atLeastOnce()).sniperLost();
 	}
-	
+
 	public void testReportsWonIfAuctionClosesWhenWinning() throws Exception {
 		sniper.currentPrice(123, 45, PriceSource.FromSniper);
 		sniper.auctionClosed();
@@ -42,7 +45,8 @@ public class AuctionSniperTest extends TestCase {
 		inOrder.verify(sniperListener, atLeastOnce()).sniperWon();
 	}
 
-	public void testReportsIsWinningWhenCurrentPriceComesFromSniper() throws Exception {
+	public void testReportsIsWinningWhenCurrentPriceComesFromSniper()
+			throws Exception {
 		sniper.currentPrice(123, 45, PriceSource.FromSniper);
 		verify(sniperListener).sniperWinning();
 	}
@@ -55,7 +59,8 @@ public class AuctionSniperTest extends TestCase {
 
 		sniper.currentPrice(price, increment, PriceSource.FromOtherBidder);
 
-		verify(sniperListener, atLeastOnce()).sniperBidding(new SniperSnapshot(ITEM_ID, price, bid));
+		verify(sniperListener, atLeastOnce()).sniperBidding(
+				new SniperSnapshot(ITEM_ID, price, bid, SniperState.BIDDING));
 		verify(auction).bid(bid);
 	}
 }

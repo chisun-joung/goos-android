@@ -9,11 +9,13 @@ public class SniperSnapshot {
 	public final String itemId;
 	public final int lastPrice;
 	public final int lastBid;
+	private SniperState state;
 
-	public SniperSnapshot(String itemId, int price, int bid) {
+	public SniperSnapshot(String itemId, int price, int bid, SniperState state) {
 		this.itemId = itemId;
 		this.lastPrice = price;
 		this.lastBid = bid;
+		this.state = state;
 	}
 
 	@Override

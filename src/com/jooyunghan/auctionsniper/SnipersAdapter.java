@@ -17,7 +17,7 @@ public class SnipersAdapter extends BaseAdapter {
 	public SnipersAdapter(Context context) {
 		this.context = context;
 		state = context.getString(R.string.status_joining);
-		snapshot = new SniperSnapshot("", 0, 0);
+		snapshot = new SniperSnapshot("", 0, 0, SniperState.JOINING);
 	}
 
 	@Override
