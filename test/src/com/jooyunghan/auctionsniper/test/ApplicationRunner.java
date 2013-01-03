@@ -14,16 +14,15 @@ public class ApplicationRunner {
 		itemId = auction.getItemId();
 		solo.clickOnMenuItem("Join");
 		driver = new AuctionSniperDriver(solo, 1000);
-		driver.showsSniperStatus(itemId, 0, 0, SniperStatus.STATUS_JOINING);
+		driver.showsSniperStatus(SniperStatus.STATUS_JOINING);
 	}
 
 	public void showsSniperHasLostAuction() {
-		driver.showsSniperStatus(itemId, 0, 0, SniperStatus.STATUS_LOST);
+		driver.showsSniperStatus(SniperStatus.STATUS_LOST);
 	}
 
 	public void showsSniperHasWonAuction(int lastPrice) {
-		driver.showsSniperStatus(itemId, lastPrice, lastPrice,
-				SniperStatus.STATUS_WON);
+		driver.showsSniperStatus(SniperStatus.STATUS_WON);
 	}
 
 	public void hasShownSniperIsBidding(int lastPrice, int lastBid) {
@@ -32,8 +31,7 @@ public class ApplicationRunner {
 	}
 
 	public void hasShownSniperIsWinning(int lastPrice) {
-		driver.showsSniperStatus(itemId, lastPrice, lastPrice,
-				SniperStatus.STATUS_WINNING);
+		driver.showsSniperStatus(SniperStatus.STATUS_WINNING);
 	}
 
 	public void stop() {

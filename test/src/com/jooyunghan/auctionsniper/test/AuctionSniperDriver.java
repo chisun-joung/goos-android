@@ -21,7 +21,12 @@ public class AuctionSniperDriver {
 		assertTrue(solo.waitForText(statusText, 1, timeout));
 	}
 
+	public void showsSniperStatus(String status) {
+		assertTrue(solo.waitForText(status, 1, timeout));
+	}
+
 	public void dispose() {
 		solo.finishOpenedActivities();
 	}
+
 }

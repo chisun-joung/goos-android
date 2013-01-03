@@ -1,9 +1,13 @@
 package com.jooyunghan.auctionsniper;
 
+import android.app.Activity;
+
 public class SniperStateDisplayer implements SniperListener {
 	private SnipersAdapter adapter;
+	private Activity activity;
 
-	public SniperStateDisplayer(SnipersAdapter adapter) {
+	public SniperStateDisplayer(Activity activity, SnipersAdapter adapter) {
+		this.activity = activity;
 		this.adapter = adapter;
 	}
 
@@ -18,8 +22,13 @@ public class SniperStateDisplayer implements SniperListener {
 	}
 
 	@Override
-	public void sniperBidding(SniperState sniperState) {
-		showStatus(SniperStatus.STATUS_BIDDING);
+	public void sniperBidding(final SniperState state) {
+		activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				adapter.sniperStatusChanged(state, SniperStatus.STATUS_BIDDING);
+			}
+		});
 	}
 
 	@Override
@@ -28,6 +37,11 @@ public class SniperStateDisplayer implements SniperListener {
 	}
 
 	private void showStatus(final String status) {
-		adapter.showStatus(status);
+		activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				adapter.showStatus(status);
+			}
+		});
 	}
 }
