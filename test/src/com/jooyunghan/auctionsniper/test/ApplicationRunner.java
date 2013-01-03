@@ -13,7 +13,7 @@ public class ApplicationRunner {
 		itemId = auction.getItemId();
 		solo.clickOnMenuItem("Join");
 		driver = new AuctionSniperDriver(solo, 1000);
-		driver.showsSniperState(itemId, 0, 0, "Joining");
+		driver.showsSniperState("Joining");
 	}
 
 	public void showsSniperHasLostAuction() {
