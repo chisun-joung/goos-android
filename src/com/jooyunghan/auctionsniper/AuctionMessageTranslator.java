@@ -52,18 +52,22 @@ public class AuctionMessageTranslator implements MessageListener {
 		}
 
 		private String bidder() {
-			return unstructure(get("Bidder"));
+			return get("Bidder");
+		}
+
+		public PriceSource isFrom(String sniperId) {
+			if (sameId(sniperId, bidder()))
+				return PriceSource.FromSniper;
+			else
+				return PriceSource.FromOtherBidder;
+		}
+
+		private boolean sameId(String sniperId, String bidder) {
+			return unstructure(sniperId).equals(unstructure(bidder));
 		}
 
 		private String unstructure(String string) {
 			return string.split("@")[0];
-		}
-
-		public PriceSource isFrom(String sniperId) {
-			if (sniperId.equals(bidder()))
-				return PriceSource.FromSniper;
-			else
-				return PriceSource.FromOtherBidder;
 		}
 
 		private String get(String fieldName) {

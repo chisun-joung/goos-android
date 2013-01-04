@@ -22,7 +22,6 @@ public class MainActivity extends Activity {
 	private ListView list;
 	public Chat notToBeGCd;
 	private SnipersAdapter adapter;
-	private String sniperId;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +38,9 @@ public class MainActivity extends Activity {
 		this.notToBeGCd = chat;
 
 		Auction auction = new XMPPAuction(chat);
-		chat.addMessageListener(new AuctionMessageTranslator(sniperId,
-				new AuctionSniper(itemId, auction, new UIThreadSniperListener(
-						this, adapter))));
+		chat.addMessageListener(new AuctionMessageTranslator(connection
+				.getUser(), new AuctionSniper(itemId, auction,
+				new UIThreadSniperListener(this, adapter))));
 		auction.join();
 	}
 
@@ -70,9 +69,6 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.menu_join) {
-			this.sniperId = "sniper";
-			new JoinTask().execute("localhost", sniperId, "sniper",
-					"item-54321");
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -89,5 +85,12 @@ public class MainActivity extends Activity {
 			}
 			return null;
 		}
+	}
+
+	// test-only method (called from test)
+	// should run on UI thread
+	public void main(String[] arguments) {
+		new JoinTask().execute(arguments[0], arguments[1], arguments[2],
+				arguments[3]);
 	}
 }
