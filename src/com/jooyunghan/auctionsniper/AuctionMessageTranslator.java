@@ -24,7 +24,8 @@ public class AuctionMessageTranslator implements MessageListener {
 
 	@Override
 	public void processMessage(Chat chat, Message message) {
-		Log.d("han", sniperId + " got message from server: " + message.getBody());
+		Log.d("han",
+				sniperId + " got message from server: " + message.getBody());
 		AuctionEvent event = AuctionEvent.from(message);
 		String type = event.type();
 		if ("CLOSE".equals(type)) {
@@ -51,7 +52,11 @@ public class AuctionMessageTranslator implements MessageListener {
 		}
 
 		private String bidder() {
-			return get("Bidder");
+			return unstructure(get("Bidder"));
+		}
+
+		private String unstructure(String string) {
+			return string.split("@")[0];
 		}
 
 		public PriceSource isFrom(String sniperId) {

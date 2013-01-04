@@ -60,7 +60,8 @@ public class FakeAuctionServer {
 	private void receivesAMessageMatching(String sniperId, String format)
 			throws InterruptedException {
 		messageListener.receivesAMessage(Matchers.equalTo(format));
-		assertThat(currentChat.getParticipant(), Matchers.equalTo(sniperId));
+		assertThat(currentChat.getParticipant(),
+				Matchers.startsWith(sniperId + "@"));
 	}
 
 	public void announceClosed() throws XMPPException {
@@ -77,10 +78,6 @@ public class FakeAuctionServer {
 
 	public void stop() {
 		// connection.disconnect();
-	}
-
-	public String sniperId() {
-		return currentChat.getParticipant();
 	}
 
 	public String getItemId() {

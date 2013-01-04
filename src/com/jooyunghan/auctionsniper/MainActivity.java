@@ -22,6 +22,7 @@ public class MainActivity extends Activity {
 	private ListView list;
 	public Chat notToBeGCd;
 	private SnipersAdapter adapter;
+	private String sniperId;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +39,9 @@ public class MainActivity extends Activity {
 		this.notToBeGCd = chat;
 
 		Auction auction = new XMPPAuction(chat);
-		chat.addMessageListener(new AuctionMessageTranslator(connection
-				.getUser(), new AuctionSniper(itemId, auction,
-				new UIThreadSniperListener(this, adapter))));
+		chat.addMessageListener(new AuctionMessageTranslator(sniperId,
+				new AuctionSniper(itemId, auction, new UIThreadSniperListener(
+						this, adapter))));
 		auction.join();
 	}
 
@@ -51,7 +52,6 @@ public class MainActivity extends Activity {
 
 	private XMPPConnection connectTo(String host, String username,
 			String password) throws XMPPException {
-
 		ConnectionConfiguration connectionConfiguration = new ConnectionConfiguration(
 				host, 5222);
 		XMPPConnection connection = new XMPPConnection(connectionConfiguration);
@@ -70,7 +70,8 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.menu_join) {
-			new JoinTask().execute("localhost", "sniper", "sniper",
+			this.sniperId = "sniper";
+			new JoinTask().execute("localhost", sniperId, "sniper",
 					"item-54321");
 			return true;
 		}

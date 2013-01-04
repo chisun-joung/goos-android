@@ -16,4 +16,4 @@ To do
  * translator - incorrect message version
  * auction - handle XMPPException on send
  * ~~remove mockito~~ -> use mockito for mocking classes
- * null pointer exception (auction.sniperId())
+ * ~~null pointer exception (auction.sniperId())~~

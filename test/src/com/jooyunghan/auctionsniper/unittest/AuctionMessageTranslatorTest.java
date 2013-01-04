@@ -15,7 +15,8 @@ public class AuctionMessageTranslatorTest extends TestCase {
 	public static final Chat UNUSED_CHAT = null;
 	private static final String SNIPER_ID = "sniper-id";
 	private final Mockery context = new Mockery();
-	private final AuctionEventListener listener = context.mock(AuctionEventListener.class);
+	private final AuctionEventListener listener = context
+			.mock(AuctionEventListener.class);
 	private final AuctionMessageTranslator translator = new AuctionMessageTranslator(
 			SNIPER_ID, listener);
 
@@ -40,7 +41,8 @@ public class AuctionMessageTranslatorTest extends TestCase {
 	public void testNotifiesBidDetailsWhenCurrentPriceMessageReceivedFromOtherBidder() {
 		context.checking(new Expectations() {
 			{
-				oneOf(listener).currentPrice(192, 7, PriceSource.FromOtherBidder);
+				oneOf(listener).currentPrice(192, 7,
+						PriceSource.FromOtherBidder);
 			}
 		});
 		Message message = new Message();
@@ -57,6 +59,19 @@ public class AuctionMessageTranslatorTest extends TestCase {
 		Message message = new Message();
 		message.setBody("SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Increment: 7; Bidder: "
 				+ SNIPER_ID + ";");
+		translator.processMessage(UNUSED_CHAT, message);
+	}
+
+	public void testHandlesStructuredId() {
+		context.checking(new Expectations() {
+			{
+				oneOf(listener).currentPrice(192, 7, PriceSource.FromSniper);
+			}
+		});
+		final String structuredId = SNIPER_ID + "@localhost/xxxxx";
+		Message message = new Message();
+		message.setBody("SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Increment: 7; Bidder: "
+				+ structuredId + ";");
 		translator.processMessage(UNUSED_CHAT, message);
 	}
 }
