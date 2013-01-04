@@ -1,7 +1,5 @@
 package com.jooyunghan.auctionsniper.unittest;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import android.database.DataSetObserver;
 import android.test.AndroidTestCase;
 
@@ -11,7 +9,14 @@ import com.jooyunghan.auctionsniper.SnipersAdapter;
 
 public class SnipersAdapterTest extends AndroidTestCase {
 	private static final String ITEM_ID = "item-id";
-	private DataSetObserver observer = mock(DataSetObserver.class);
+	protected boolean onChangedCalled = false;
+	
+	private DataSetObserver observer = new DataSetObserver() {
+		@Override
+		public void onChanged() {
+			onChangedCalled    = true;
+		}
+	};
 
 	public void testSetsSniperValuesProperly() throws Exception {
 		SnipersAdapter adapter = new SnipersAdapter(getContext());
@@ -19,7 +24,7 @@ public class SnipersAdapterTest extends AndroidTestCase {
 		
 		adapter.sniperStateChanged(new SniperSnapshot(ITEM_ID, 555, 666, SniperState.BIDDING));
 		
-		verify(observer).onChanged();
+		assertTrue("onChanged should be called", onChangedCalled);
 		assertEquals("item-id", adapter.getItemId());
 		assertEquals("555/666", adapter.getDetail());
 		assertEquals("Bidding", adapter.getState());
