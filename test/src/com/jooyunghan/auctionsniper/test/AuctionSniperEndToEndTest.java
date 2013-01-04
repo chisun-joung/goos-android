@@ -93,6 +93,7 @@ public class AuctionSniperEndToEndTest extends
 	@Override
 	public void tearDown() throws Exception {
 		auction.stop();
+		auction2.stop();
 		application.stop();
 		super.tearDown();
 	}

@@ -27,15 +27,16 @@ public class FakeAuctionServer {
 	public FakeAuctionServer(String itemId) {
 		this.itemId = itemId;
 
-		ConnectionConfiguration connectionConfiguration = new ConnectionConfiguration(
+		ConnectionConfiguration config = new ConnectionConfiguration(
 				XMPP_HOSTNAME, 5222);
-		this.connection = new XMPPConnection(connectionConfiguration);
+		this.connection = new XMPPConnection(config);
 	}
 
-	public void startSellingItem() throws XMPPException {
+	public void startSellingItem() throws Exception {
 		connection.connect();
 		connection.login(String.format(ITEM_ID_AS_LOGIN, itemId),
 				AUCTION_PASSWORD, AUCTION_RESOURCE);
+		Log.d("han", "login:" + String.format(ITEM_ID_AS_LOGIN, itemId));
 		connection.getChatManager().addChatListener(new ChatManagerListener() {
 			@Override
 			public void chatCreated(Chat chat, boolean locallyCreated) {
@@ -43,7 +44,6 @@ public class FakeAuctionServer {
 				chat.addMessageListener(messageListener);
 			}
 		});
-		Log.d("han", "login:" + String.format(ITEM_ID_AS_LOGIN, itemId));
 	}
 
 	public void hasReceivedJoinRequestFrom(String sniperId)

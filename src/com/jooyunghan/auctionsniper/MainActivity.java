@@ -14,14 +14,17 @@ import android.view.MenuItem;
 import android.widget.ListView;
 
 public class MainActivity extends Activity {
-
+	private static final int ARG_HOSTNAME = 0;
+	private static final int ARG_USERNAME = 1;
+	private static final int ARG_PASSWORD = 2;
 	private static final String ITEM_ID_AS_LOGIN = "auction-%s";
 	private static final String AUCTION_RESOURCE = "Auction";
 	private static final String AUCTION_ID_FORMAT = ITEM_ID_AS_LOGIN + "@%s/"
 			+ AUCTION_RESOURCE;
 	private ListView list;
-	public Chat notToBeGCd;
+	private Chat notToBeGCd;
 	private SnipersAdapter adapter;
+	public XMPPConnection connection;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +81,11 @@ public class MainActivity extends Activity {
 		@Override
 		protected Void doInBackground(String... params) {
 			try {
-				joinAuction(connectTo(params[0], params[1], params[2]),
-						params[3]);
+				connection = connectTo(params[ARG_HOSTNAME],
+						params[ARG_USERNAME], params[ARG_PASSWORD]);
+				for (int i = 0; i < params.length; i++) {
+					joinAuction(connection, params[i]);
+				}
 			} catch (XMPPException e1) {
 				e1.printStackTrace();
 			}
@@ -90,7 +96,6 @@ public class MainActivity extends Activity {
 	// test-only method (called from test)
 	// should run on UI thread
 	public void main(String[] arguments) {
-		new JoinTask().execute(arguments[0], arguments[1], arguments[2],
-				arguments[3]);
+		new JoinTask().execute(arguments);
 	}
 }
