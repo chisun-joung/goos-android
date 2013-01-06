@@ -34,6 +34,7 @@ public class FakeAuctionServer {
 
 	public void startSellingItem() throws Exception {
 		connection.connect();
+		Log.d("han", "connect:" + String.format(ITEM_ID_AS_LOGIN, itemId));
 		connection.login(String.format(ITEM_ID_AS_LOGIN, itemId),
 				AUCTION_PASSWORD, AUCTION_RESOURCE);
 		Log.d("han", "login:" + String.format(ITEM_ID_AS_LOGIN, itemId));
@@ -65,19 +66,25 @@ public class FakeAuctionServer {
 	}
 
 	public void announceClosed() throws XMPPException {
-		currentChat.sendMessage("SOLVersion: 1.1; Event: CLOSE;");
-		Log.d("han", "message sent by fake");
+		String message = "SOLVersion: 1.1; Event: CLOSE;";
+		Log.d("han", "sending message: " + message);
+		currentChat.sendMessage(message);
 	}
 
 	public void reportPrice(int price, int increment, String bidder)
 			throws XMPPException {
-		currentChat.sendMessage(String.format("SOLVersion: 1.1; Event: PRICE; "
-				+ "CurrentPrice: %d; Increment: %d; Bidder: %s;", price,
-				increment, bidder));
+		String message = String.format("SOLVersion: 1.1; Event: PRICE; "
+						+ "CurrentPrice: %d; Increment: %d; Bidder: %s;", price,
+						increment, bidder);
+		Log.d("han", "sending message: " + message);
+		currentChat.sendMessage(message);
 	}
 
 	public void stop() {
-		// connection.disconnect();
+//		if (connection != null && connection.isConnected()) {
+//			connection.disconnect();
+//			Log.d("han", "disconnected");
+//		}
 	}
 
 	public String getItemId() {

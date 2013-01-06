@@ -24,8 +24,7 @@ public class AuctionMessageTranslator implements MessageListener {
 
 	@Override
 	public void processMessage(Chat chat, Message message) {
-		Log.d("han",
-				sniperId + " got message from server: " + message.getBody());
+		Log.d("han",	"message received: " + message.getBody());
 		AuctionEvent event = AuctionEvent.from(message);
 		String type = event.type();
 		if ("CLOSE".equals(type)) {

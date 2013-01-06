@@ -1,7 +1,6 @@
 package com.jooyunghan.auctionsniper;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +53,6 @@ public class SnipersAdapter extends BaseAdapter implements SniperListener {
 
 	@Override
 	public void sniperStateChanged(SniperSnapshot snapshot) {
-		Log.d("han", "sniperStatesChanged(" + snapshot + ")");
 		this.snapshot = snapshot;
 		this.notifyDataSetChanged();
 	}

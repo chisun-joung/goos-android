@@ -22,7 +22,7 @@ public class SingleMessageListener implements MessageListener {
 
 	@Override
 	public void processMessage(Chat chat, Message message) {
-		Log.d("han", "message received by fake");
+		Log.d("han", "message received: " + message.getBody());
 		messages.add(message);
 	}
 

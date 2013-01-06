@@ -35,6 +35,16 @@ public class MainActivity extends Activity {
 		list.setAdapter(adapter);
 	}
 
+	@Override
+	protected void onPause() {
+		super.onPause();
+//		if (connection != null && connection.isConnected()) {
+//			connection.disconnect();
+//			connection = null;
+//			Log.d("han", "disconnected");
+//		}
+	}
+
 	private void joinAuction(XMPPConnection connection, String itemId) {
 		final Chat chat = connection.getChatManager().createChat(
 				auctionId(itemId, connection), null);
@@ -58,6 +68,7 @@ public class MainActivity extends Activity {
 				host, 5222);
 		XMPPConnection connection = new XMPPConnection(connectionConfiguration);
 		connection.connect();
+		Log.d("han", "connect:" + username);
 		connection.login(username, password, AUCTION_RESOURCE);
 		Log.d("han", "login:" + username);
 		return connection;
@@ -83,7 +94,7 @@ public class MainActivity extends Activity {
 			try {
 				connection = connectTo(params[ARG_HOSTNAME],
 						params[ARG_USERNAME], params[ARG_PASSWORD]);
-				for (int i = 0; i < params.length; i++) {
+				for (int i = 3; i < params.length; i++) {
 					joinAuction(connection, params[i]);
 				}
 			} catch (XMPPException e1) {

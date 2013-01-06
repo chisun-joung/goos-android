@@ -2,6 +2,8 @@ package com.jooyunghan.auctionsniper.test;
 
 import static junit.framework.Assert.assertTrue;
 
+import android.util.Log;
+
 import com.jayway.android.robotium.solo.Solo;
 import com.jooyunghan.auctionsniper.MainActivity;
 
@@ -26,7 +28,7 @@ public class AuctionSniperDriver {
 	}
 
 	public void dispose() {
-		solo.finishOpenedActivities();
+		Log.d("han", "dispose");
 	}
 
 }
