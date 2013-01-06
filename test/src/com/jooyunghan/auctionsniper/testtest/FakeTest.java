@@ -17,14 +17,14 @@ public class FakeTest extends AndroidTestCase {
 		server.stop();
 	}
 
-	public void testConnectToGtalk() throws Exception {
-		ConnectionConfiguration config = new ConnectionConfiguration(
-				"talk.google.com", 5222, "gtalk.com");
-		XMPPConnection connection = new XMPPConnection(config);
-		connection.connect();
-		connection.login("jooyung.han@gmail.com", "Rnfjrl00");
-		Chat chat = connection.getChatManager().createChat("hyejoung.seo@gmail.com", null);
-		chat.sendMessage("Hello there");
-		connection.disconnect();
-	}
+//	public void testConnectToGtalk() throws Exception {
+//		ConnectionConfiguration config = new ConnectionConfiguration(
+//				"talk.google.com", 5222, "gtalk.com");
+//		XMPPConnection connection = new XMPPConnection(config);
+//		connection.connect();
+//		connection.login("jooyung.han@gmail.com", "Rnfjrl00");
+//		Chat chat = connection.getChatManager().createChat("hyejoung.seo@gmail.com", null);
+//		chat.sendMessage("Hello there");
+//		connection.disconnect();
+//	}
 }
