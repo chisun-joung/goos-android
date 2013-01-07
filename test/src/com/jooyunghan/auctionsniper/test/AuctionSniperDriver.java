@@ -1,16 +1,15 @@
 package com.jooyunghan.auctionsniper.test;
 
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.SynchronousQueue;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 
+import android.app.Activity;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
@@ -21,7 +20,6 @@ import android.widget.TextView;
 import com.jayway.android.robotium.solo.Solo;
 import com.jooyunghan.auctionsniper.MainActivity;
 import com.jooyunghan.auctionsniper.R;
-import static junit.framework.Assert.fail;
 
 interface Query<T, V> {
 	V query(T t);
@@ -37,53 +35,66 @@ public class AuctionSniperDriver {
 		solo.assertCurrentActivity("activity not launched", MainActivity.class);
 	}
 
-	public void showsSniperState(String status) {
+	public void showsSniperState(String status) throws InterruptedException {
 		hasItemWithText(R.id.list, status);
 	}
 
 	public void showsSniperState(String itemId, int lastPrice, int lastBid,
-			String statusText) {
+			String statusText) throws InterruptedException {
 		hasItemWithText(R.id.list, itemId,
 				String.format("%d/%d", lastPrice, lastBid), statusText);
 	}
 
-	private void hasItemWithText(int resId, String... matchStrings) {
+	private void hasItemWithText(int resId, String... matchStrings) throws InterruptedException {
 		final long endTime = SystemClock.uptimeMillis() + timeout;
 		List<String> matchStringList = Arrays.asList(matchStrings);
-
+		ListView list = (ListView) solo.getView(resId);
 		while (SystemClock.uptimeMillis() < endTime) {
-			ListView list = (ListView) solo.getView(resId);
 			ListAdapter adapter = list.getAdapter();
 			for (int i = 0; i < adapter.getCount(); i++) {
-				View child = adapter.getView(i, null, list);
-				List<String> childStrings = getAllText(child);
+				List<String> childStrings = getAllItemText(list, i);
 				if (childStrings.containsAll(matchStringList)) {
 					return;
 				}
 			}
+			
 			sleep();
 		}
 
 		List<String> rows = new ArrayList<String>();
-		ListView list = (ListView) solo.getView(resId);
 		ListAdapter adapter = list.getAdapter();
 		for (int i = 0; i < adapter.getCount(); i++) {
-			View child = adapter.getView(i, null, list);
 			rows.add("item " + i + ": "
-					+ StringUtils.join(getAllText(child), ", "));
+					+ StringUtils.join(getAllItemText(list, i), ", "));
 		}
-		fail("can't find an item with:\n  " + StringUtils.join(matchStrings, ", ")
-				+ "\nbecause\n  " + StringUtils.join(rows, "\n  "));
+		fail("can't find an item with:\n  "
+				+ StringUtils.join(matchStrings, ", ") + "\nbecause\n  "
+				+ StringUtils.join(rows, "\n  "));
 	}
 
-	private List<String> getAllText(View child) {
-		ArrayList<String> text = new ArrayList<String>();
-		for (View subView : solo.getViews(child)) {
-			if (subView instanceof TextView) {
-				text.add(((TextView) subView).getText().toString());
+	private List<String> getAllItemText(final ListView list, final int pos) throws InterruptedException {
+		final SynchronousQueue<List<String>> queue = new SynchronousQueue<List<String>>();
+		
+		Activity activity = solo.getCurrentActivity();
+		activity.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				ArrayList<String> text = new ArrayList<String>();
+				ListAdapter adapter = list.getAdapter();
+				View child = adapter.getView(pos, null, list);
+				for (View subView : solo.getViews(child)) {
+					if (subView instanceof TextView) {
+						text.add(((TextView) subView).getText().toString());
+					}
+				}
+				try {
+					queue.put(text);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
-		}
-		return text;
+		});
+		return queue.take();
 	}
 
 	static private void sleep() {

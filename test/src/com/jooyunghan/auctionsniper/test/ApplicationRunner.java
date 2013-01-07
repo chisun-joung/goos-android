@@ -1,7 +1,10 @@
 package com.jooyunghan.auctionsniper.test;
 
+import static com.jooyunghan.auctionsniper.SnipersAdapter.textFor;
+
 import com.jayway.android.robotium.solo.Solo;
 import com.jooyunghan.auctionsniper.MainActivity;
+import com.jooyunghan.auctionsniper.SniperState;
 
 public class ApplicationRunner {
 	public static final String SNIPER_XMPP_ID = "sniper";
@@ -9,35 +12,35 @@ public class ApplicationRunner {
 	public static final String XMPP_HOSTNAME = "localhost";
 	private AuctionSniperDriver driver;
 
-	public void startBiddingIn(Solo solo, final FakeAuctionServer... auctions) {
+	public void startBiddingIn(Solo solo, final FakeAuctionServer... auctions)
+			throws Exception {
 		final MainActivity activity = (MainActivity) solo.getCurrentActivity();
-		activity.runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				activity.main(arguments(auctions));
-			}
-		});
-		driver = new AuctionSniperDriver(solo, 1000);
-		driver.showsSniperState("Joining");
+		activity.main(arguments(auctions));
+		driver = new AuctionSniperDriver(solo, 5000);
+		for (FakeAuctionServer auction : auctions) {
+			driver.showsSniperState(auction.getItemId(), 0, 0,
+					textFor(activity, SniperState.JOINING));
+		}
 	}
 
-	public void showsSniperHasLostAuction() {
+	public void showsSniperHasLostAuction() throws InterruptedException {
 		driver.showsSniperState("Lost");
 	}
 
 	public void showsSniperHasWonAuction(FakeAuctionServer auction,
-			int lastPrice) {
+			int lastPrice) throws InterruptedException {
 		driver.showsSniperState(auction.getItemId(), lastPrice, lastPrice,
 				"Won");
 	}
 
 	public void hasShownSniperIsBidding(FakeAuctionServer auction,
-			int lastPrice, int lastBid) {
+			int lastPrice, int lastBid) throws InterruptedException {
 		driver.showsSniperState(auction.getItemId(), lastPrice, lastBid,
 				"Bidding");
 	}
 
-	public void hasShownSniperIsWinning(FakeAuctionServer auction, int lastPrice) {
+	public void hasShownSniperIsWinning(FakeAuctionServer auction, int lastPrice)
+			throws InterruptedException {
 		driver.showsSniperState(auction.getItemId(), lastPrice, lastPrice,
 				"Winning");
 	}

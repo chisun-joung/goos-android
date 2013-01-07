@@ -33,7 +33,7 @@ public class SniperSnapshot {
 		return HashCodeBuilder.reflectionHashCode(this);
 	}
 
-	public static SniperSnapshot join(String itemId) {
+	public static SniperSnapshot joining(String itemId) {
 		return new SniperSnapshot(itemId, 0, 0, SniperState.JOINING);
 	}
 
@@ -47,5 +47,9 @@ public class SniperSnapshot {
 
 	public SniperSnapshot bidding(int price, int bid) {
 		return new SniperSnapshot(itemId, price, bid, SniperState.BIDDING);
+	}
+
+	public boolean isForSameItemAs(SniperSnapshot other) {
+		return this.itemId.equals(other.itemId);
 	}
 }

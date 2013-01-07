@@ -9,7 +9,7 @@ To do
  * ~~single item - join, bid & lose~~
  * ~~single item - join, bid & win~~
  * ~~single item - show price details~~
- * multiple items
+ * ~~multiple items~~
  * add new items through the GUI
  * stop bidding at stop price
  * translator - invalid message from Auction

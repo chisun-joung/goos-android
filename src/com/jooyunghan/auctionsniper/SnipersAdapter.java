@@ -1,5 +1,8 @@
 package com.jooyunghan.auctionsniper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,21 +13,20 @@ import android.widget.TextView;
 public class SnipersAdapter extends BaseAdapter implements SniperListener {
 
 	private Context context;
-	private SniperSnapshot snapshot;
+	private List<SniperSnapshot> snapshots = new ArrayList<SniperSnapshot>();
 
 	public SnipersAdapter(Context context) {
 		this.context = context;
-		snapshot = new SniperSnapshot("", 0, 0, SniperState.JOINING);
 	}
 
 	@Override
 	public int getCount() {
-		return 1;
+		return snapshots.size();
 	}
 
 	@Override
 	public Object getItem(int position) {
-		return snapshot;
+		return snapshots.get(position);
 	}
 
 	@Override
@@ -39,10 +41,10 @@ public class SnipersAdapter extends BaseAdapter implements SniperListener {
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			convertView = inflater.inflate(R.layout.list_item, parent, false);
 		}
-		setField(convertView, R.id.text_item_id, getItemId());
-		setField(convertView, R.id.text_detail, getDetail());
-		setField(convertView, R.id.text_status, getState());
-
+		SniperSnapshot snapshot = snapshots.get(position);
+		setField(convertView, R.id.text_item_id, snapshot.itemId);
+		setField(convertView, R.id.text_detail, getDetailText(snapshot));
+		setField(convertView, R.id.text_status, getStateText(snapshot));
 		return convertView;
 	}
 
@@ -51,34 +53,50 @@ public class SnipersAdapter extends BaseAdapter implements SniperListener {
 		tv.setText(fieldValue);
 	}
 
-	@Override
-	public void sniperStateChanged(SniperSnapshot snapshot) {
-		this.snapshot = snapshot;
-		this.notifyDataSetChanged();
-	}
-
-	public String getItemId() {
-		return snapshot.itemId;
-	}
-
-	public String getDetail() {
+	private String getDetailText(SniperSnapshot snapshot) {
 		return String.format("%d/%d", snapshot.lastPrice, snapshot.lastBid);
 	}
 
-	public String getState() {
-		switch (snapshot.state) {
-		case JOINING: 
+	public String getStateText(SniperSnapshot snapshot) {
+		return textFor(context, snapshot.state);
+	}
+
+	public static String textFor(Context context, SniperState state) {
+		switch (state) {
+		case JOINING:
 			return context.getString(R.string.status_joining);
-		case BIDDING: 
+		case BIDDING:
 			return context.getString(R.string.status_bidding);
-		case WINNING: 
+		case WINNING:
 			return context.getString(R.string.status_winning);
-		case LOST: 
+		case LOST:
 			return context.getString(R.string.status_lost);
-		case WON: 
+		case WON:
 			return context.getString(R.string.status_won);
 		}
-		throw new IllegalArgumentException("Unknown state:" + snapshot.state);
+		throw new IllegalArgumentException("Unknown state:" + state);
+	}
+
+	@Override
+	public void sniperStateChanged(SniperSnapshot newSnapshot) {
+		int row = rowMatching(newSnapshot);
+		snapshots.set(row, newSnapshot);
+		notifyDataSetChanged();
+	}
+
+	private int rowMatching(SniperSnapshot newSnapshot) {
+		for (int i = 0; i < snapshots.size(); i++) {
+			SniperSnapshot snapshot = snapshots.get(i);
+			if (snapshot.isForSameItemAs(newSnapshot)) { // avoid feature envy
+				return i;
+			}
+		}
+		throw new Defect("Cannot find match for " + newSnapshot);
+	}
+
+	public void addSniper(SniperSnapshot snapshot) {
+		snapshots.add(snapshot);
+		notifyDataSetChanged();
 	}
 
 }
