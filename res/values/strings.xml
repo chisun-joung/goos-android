@@ -10,5 +10,7 @@
     <string name="status_winning">Winning</string>
     <string name="status_lost">Lost</string>
     <string name="status_won">Won</string>
+    <string name="join_auction">Join Auction</string>
+    <string name="item_id_label">Item ID</string>
 
 </resources>

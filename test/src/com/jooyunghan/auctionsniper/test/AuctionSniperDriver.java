@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,10 +21,6 @@ import android.widget.TextView;
 import com.jayway.android.robotium.solo.Solo;
 import com.jooyunghan.auctionsniper.MainActivity;
 import com.jooyunghan.auctionsniper.R;
-
-interface Query<T, V> {
-	V query(T t);
-}
 
 public class AuctionSniperDriver {
 	private int timeout;
@@ -33,6 +30,19 @@ public class AuctionSniperDriver {
 		this.solo = solo;
 		this.timeout = timeout;
 		solo.assertCurrentActivity("activity not launched", MainActivity.class);
+	}
+
+	public void startBiddingFor(String itemId) {
+		solo.enterText(itemIdField(), itemId);
+		solo.clickOnView(bidButton());
+	}
+
+	private View bidButton() {
+		return solo.getView(R.id.bid_button);
+	}
+
+	private EditText itemIdField() {
+		return (EditText) solo.getView(R.id.item_id_text);
 	}
 
 	public void showsSniperState(String status) throws InterruptedException {
@@ -107,5 +117,4 @@ public class AuctionSniperDriver {
 	public void dispose() {
 		Log.d("han", "dispose");
 	}
-
 }

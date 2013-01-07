@@ -9,7 +9,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" >
+        android:layout_below="@+id/item_id_text" >
     </ListView>
+
+    <EditText
+        android:id="@+id/item_id_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/bid_button"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/bid_button"
+        android:hint="@string/item_id_label" >
+
+        <requestFocus />
+    </EditText>
+
+    <Button
+        android:id="@+id/bid_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/join_auction" />
 
 </RelativeLayout>
