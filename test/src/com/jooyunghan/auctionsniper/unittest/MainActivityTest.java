@@ -1,14 +1,20 @@
 package com.jooyunghan.auctionsniper.unittest;
 
+import static org.hamcrest.Matchers.equalTo;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.ListView;
 
+import com.jayway.android.robotium.solo.Solo;
 import com.jooyunghan.auctionsniper.MainActivity;
 import com.jooyunghan.auctionsniper.R;
+import com.jooyunghan.auctionsniper.UserRequestListener;
+import com.jooyunghan.auctionsniper.test.AuctionSniperDriver;
 
-public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
+public class MainActivityTest extends
+		ActivityInstrumentationTestCase2<MainActivity> {
 
 	private MainActivity activity;
+	private Solo solo;
 
 	public MainActivityTest() {
 		super(MainActivity.class);
@@ -18,6 +24,7 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	protected void setUp() throws Exception {
 		super.setUp();
 		activity = getActivity();
+		solo = new Solo(getInstrumentation(), activity);
 	}
 
 	public void testStatusShowsInListView() throws Exception {
@@ -25,4 +32,18 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		assertNotNull(list);
 	}
 
+	public void testMakesUserRequestWhenJoinButtonClicked() throws Exception {
+		AuctionSniperDriver driver = new AuctionSniperDriver(solo, 100);
+		final ValueMatcherProbe<String> buttonProbe = new ValueMatcherProbe<String>(
+				equalTo("an item-id"), "join request for");
+
+		activity.addUserRequestListener(new UserRequestListener() {
+			@Override
+			public void joinAuction(String itemId) {
+				buttonProbe.setReceivedValue(itemId);
+			}
+		});
+		driver.startBiddingFor("an item-id");
+		driver.check(buttonProbe);
+	}
 }

@@ -1,8 +1,7 @@
 package com.jooyunghan.auctionsniper;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -14,7 +13,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import com.jooyunghan.util.Announcer;
 
 public class MainActivity extends Activity {
 	private static final int ARG_HOSTNAME = 0;
@@ -24,8 +29,10 @@ public class MainActivity extends Activity {
 	private static final String AUCTION_RESOURCE = "Auction";
 	private static final String AUCTION_ID_FORMAT = ITEM_ID_AS_LOGIN + "@%s/"
 			+ AUCTION_RESOURCE;
-	private ListView list;
-	private Chat notToBeGCd;
+
+	private final Announcer<UserRequestListener> userRequests = Announcer
+			.to(UserRequestListener.class);
+	private List<Chat> notToBeGCd = new ArrayList<Chat>();
 	private SnipersAdapter snipers;
 	public XMPPConnection connection;
 
@@ -33,9 +40,20 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		list = (ListView) findViewById(R.id.list);
+
+		final ListView list = (ListView) findViewById(R.id.list);
 		snipers = new SnipersAdapter(this);
 		list.setAdapter(snipers);
+
+		final TextView itemIdField = (TextView) findViewById(R.id.item_id_text);
+		final Button button = (Button) findViewById(R.id.bid_button);
+		button.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				userRequests.announce().joinAuction(
+						itemIdField.getText().toString());
+			}
+		});
 	}
 
 	@Override
@@ -46,28 +64,6 @@ public class MainActivity extends Activity {
 		// connection = null;
 		// Log.d("han", "disconnected");
 		// }
-	}
-
-	private void joinAuction(XMPPConnection connection, String itemId) {
-		safelyAddItemToModel(itemId);
-		final Chat chat = connection.getChatManager().createChat(
-				auctionId(itemId, connection), null);
-		this.notToBeGCd = chat;
-
-		Auction auction = new XMPPAuction(chat);
-		chat.addMessageListener(new AuctionMessageTranslator(connection
-				.getUser(), new AuctionSniper(itemId, auction,
-				new UIThreadSniperListener(this, snipers))));
-		auction.join();
-	}
-
-	private void safelyAddItemToModel(final String itemId) {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				snipers.addSniper(SniperSnapshot.joining(itemId));
-			}
-		});
 	}
 
 	private String auctionId(String itemId, XMPPConnection connection) {
@@ -105,8 +101,24 @@ public class MainActivity extends Activity {
 	public void main(final String[] args) throws XMPPException {
 		connection = connectTo(args[ARG_HOSTNAME], args[ARG_USERNAME],
 				args[ARG_PASSWORD]);
-		for (int i = 3; i < args.length; i++) {
-			joinAuction(connection, args[i]);
-		}
+		addUserRequestListener(new UserRequestListener() {
+			@Override
+			public void joinAuction(String itemId) {
+				snipers.addSniper(SniperSnapshot.joining(itemId));
+				Chat chat = connection.getChatManager().createChat(
+						auctionId(itemId, connection), null);
+				notToBeGCd.add(chat);
+
+				Auction auction = new XMPPAuction(chat);
+				chat.addMessageListener(new AuctionMessageTranslator(connection
+						.getUser(), new AuctionSniper(itemId, auction,
+						new UIThreadSniperListener(MainActivity.this, snipers))));
+				auction.join();
+			}
+		});
+	}
+
+	public void addUserRequestListener(UserRequestListener userRequestListener) {
+		userRequests.addListener(userRequestListener);
 	}
 }

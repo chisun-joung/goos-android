@@ -10,7 +10,7 @@ To do
  * ~~single item - join, bid & win~~
  * ~~single item - show price details~~
  * ~~multiple items~~
- * add new items through the GUI
+ * ~~add new items through the GUI~~
  * stop bidding at stop price
  * translator - invalid message from Auction
  * translator - incorrect message version

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.SynchronousQueue;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hamcrest.StringDescription;
 
 import android.app.Activity;
 import android.os.SystemClock;
@@ -21,18 +22,23 @@ import android.widget.TextView;
 import com.jayway.android.robotium.solo.Solo;
 import com.jooyunghan.auctionsniper.MainActivity;
 import com.jooyunghan.auctionsniper.R;
+import com.objogate.wl.Probe;
+import com.objogate.wl.internal.Timeout;
 
 public class AuctionSniperDriver {
-	private int timeout;
+	private int timeoutMillis;
+	private int pollDelayMillis;
 	private Solo solo;
 
 	public AuctionSniperDriver(Solo solo, int timeout) {
 		this.solo = solo;
-		this.timeout = timeout;
+		this.timeoutMillis = timeout;
+		this.pollDelayMillis = 100;
 		solo.assertCurrentActivity("activity not launched", MainActivity.class);
 	}
 
 	public void startBiddingFor(String itemId) {
+		solo.clearEditText(itemIdField());
 		solo.enterText(itemIdField(), itemId);
 		solo.clickOnView(bidButton());
 	}
@@ -55,8 +61,9 @@ public class AuctionSniperDriver {
 				String.format("%d/%d", lastPrice, lastBid), statusText);
 	}
 
-	private void hasItemWithText(int resId, String... matchStrings) throws InterruptedException {
-		final long endTime = SystemClock.uptimeMillis() + timeout;
+	private void hasItemWithText(int resId, String... matchStrings)
+			throws InterruptedException {
+		final long endTime = SystemClock.uptimeMillis() + timeoutMillis;
 		List<String> matchStringList = Arrays.asList(matchStrings);
 		ListView list = (ListView) solo.getView(resId);
 		while (SystemClock.uptimeMillis() < endTime) {
@@ -67,8 +74,7 @@ public class AuctionSniperDriver {
 					return;
 				}
 			}
-			
-			sleep();
+			waitFor(pollDelayMillis);
 		}
 
 		List<String> rows = new ArrayList<String>();
@@ -82,9 +88,10 @@ public class AuctionSniperDriver {
 				+ StringUtils.join(rows, "\n  "));
 	}
 
-	private List<String> getAllItemText(final ListView list, final int pos) throws InterruptedException {
+	private List<String> getAllItemText(final ListView list, final int pos)
+			throws InterruptedException {
 		final SynchronousQueue<List<String>> queue = new SynchronousQueue<List<String>>();
-		
+
 		Activity activity = solo.getCurrentActivity();
 		activity.runOnUiThread(new Runnable() {
 			@Override
@@ -107,14 +114,81 @@ public class AuctionSniperDriver {
 		return queue.take();
 	}
 
-	static private void sleep() {
+	static private void waitFor(int delayInMillis) {
 		try {
-			Thread.sleep(100);
+			Thread.sleep(delayInMillis);
 		} catch (InterruptedException ignored) {
 		}
 	}
 
 	public void dispose() {
 		Log.d("han", "dispose");
+	}
+
+	public void check(Probe probe) {
+		if (!poll(probe)) {
+			throw new AssertionError(describeFailureOf(probe));
+		}
+	}
+
+	protected String describeFailureOf(Probe probe) {
+		StringDescription description = new StringDescription();
+
+		description.appendText("\nTried to find:\n    ");
+		probe.describeTo(description);
+		description.appendText("\nbut:\n    ");
+		probe.describeFailureTo(description);
+
+		return description.toString();
+	}
+
+	private boolean poll(Probe probe) {
+		Timeout timeout = new Timeout(this.timeoutMillis);
+
+		for (;;) {
+			runProbe(probe);
+
+			if (probe.isSatisfied()) {
+				return true;
+			} else if (timeout.hasTimedOut()) {
+				return false;
+			} else {
+				waitFor(pollDelayMillis);
+			}
+		}
+	}
+
+	protected void runProbe(final Probe probe) {
+		try {
+			invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					probe.probe();
+				}
+			});
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void invokeAndWait(final Runnable runnable)
+			throws InterruptedException {
+		final SynchronousQueue<Boolean> queue = new SynchronousQueue<Boolean>();
+
+		Activity activity = solo.getCurrentActivity();
+		activity.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				runnable.run();
+				try {
+					queue.put(true);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
+		queue.take();
 	}
 }
