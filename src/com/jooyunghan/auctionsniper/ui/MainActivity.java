@@ -3,7 +3,6 @@ package com.jooyunghan.auctionsniper.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -20,27 +19,26 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.jooyunghan.auctionsniper.Auction;
-import com.jooyunghan.auctionsniper.AuctionMessageTranslator;
 import com.jooyunghan.auctionsniper.AuctionSniper;
 import com.jooyunghan.auctionsniper.R;
 import com.jooyunghan.auctionsniper.SniperSnapshot;
 import com.jooyunghan.auctionsniper.UIThreadSniperListener;
 import com.jooyunghan.auctionsniper.UserRequestListener;
-import com.jooyunghan.auctionsniper.XMPPAuction;
+import com.jooyunghan.auctionsniper.R.id;
+import com.jooyunghan.auctionsniper.R.layout;
+import com.jooyunghan.auctionsniper.R.menu;
+import com.jooyunghan.auctionsniper.xmpp.XMPPAuction;
 import com.jooyunghan.util.Announcer;
 
 public class MainActivity extends Activity {
 	private static final int ARG_HOSTNAME = 0;
 	private static final int ARG_USERNAME = 1;
 	private static final int ARG_PASSWORD = 2;
-	private static final String ITEM_ID_AS_LOGIN = "auction-%s";
 	private static final String AUCTION_RESOURCE = "Auction";
-	private static final String AUCTION_ID_FORMAT = ITEM_ID_AS_LOGIN + "@%s/"
-			+ AUCTION_RESOURCE;
 
 	private final Announcer<UserRequestListener> userRequests = Announcer
 			.to(UserRequestListener.class);
-	private List<Chat> notToBeGCd = new ArrayList<Chat>();
+	private List<Auction> notToBeGCd = new ArrayList<Auction>();
 	private SnipersAdapter snipers;
 	public XMPPConnection connection;
 
@@ -74,12 +72,7 @@ public class MainActivity extends Activity {
 		// }
 	}
 
-	private String auctionId(String itemId, XMPPConnection connection) {
-		return String.format(AUCTION_ID_FORMAT, itemId,
-				connection.getServiceName());
-	}
-
-	private XMPPConnection connectTo(String host, String username,
+	public static XMPPConnection connectTo(String host, String username,
 			String password) throws XMPPException {
 		ConnectionConfiguration connectionConfiguration = new ConnectionConfiguration(
 				host, 5222);
@@ -113,14 +106,11 @@ public class MainActivity extends Activity {
 			@Override
 			public void joinAuction(String itemId) {
 				snipers.addSniper(SniperSnapshot.joining(itemId));
-				Chat chat = connection.getChatManager().createChat(
-						auctionId(itemId, connection), null);
-				notToBeGCd.add(chat);
-
-				Auction auction = new XMPPAuction(chat);
-				chat.addMessageListener(new AuctionMessageTranslator(connection
-						.getUser(), new AuctionSniper(itemId, auction,
-						new UIThreadSniperListener(MainActivity.this, snipers))));
+				Auction auction = new XMPPAuction(connection, itemId);
+				notToBeGCd.add(auction);
+				auction.addAuctionEventListener(new AuctionSniper(itemId,
+						auction, new UIThreadSniperListener(MainActivity.this,
+								snipers)));
 				auction.join();
 			}
 		});

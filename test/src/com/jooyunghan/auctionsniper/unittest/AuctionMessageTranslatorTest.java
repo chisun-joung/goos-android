@@ -9,7 +9,7 @@ import org.jmock.Mockery;
 
 import com.jooyunghan.auctionsniper.AuctionEventListener;
 import com.jooyunghan.auctionsniper.AuctionEventListener.PriceSource;
-import com.jooyunghan.auctionsniper.AuctionMessageTranslator;
+import com.jooyunghan.auctionsniper.xmpp.AuctionMessageTranslator;
 
 public class AuctionMessageTranslatorTest extends TestCase {
 	public static final Chat UNUSED_CHAT = null;

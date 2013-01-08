@@ -11,7 +11,7 @@ import org.jivesoftware.smack.XMPPException;
 
 import android.util.Log;
 
-import com.jooyunghan.auctionsniper.XMPPAuction;
+import com.jooyunghan.auctionsniper.xmpp.XMPPAuction;
 
 public class FakeAuctionServer {
 	private static final String XMPP_HOSTNAME = "localhost";

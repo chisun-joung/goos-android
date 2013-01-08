@@ -1,4 +1,4 @@
-package com.jooyunghan.auctionsniper;
+package com.jooyunghan.auctionsniper.xmpp;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +9,7 @@ import org.jivesoftware.smack.packet.Message;
 
 import android.util.Log;
 
+import com.jooyunghan.auctionsniper.AuctionEventListener;
 import com.jooyunghan.auctionsniper.AuctionEventListener.PriceSource;
 
 public class AuctionMessageTranslator implements MessageListener {
