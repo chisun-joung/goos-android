@@ -27,7 +27,7 @@ public class ApplicationRunner {
 	}
 
 	private void startSniper(Solo solo, final FakeAuctionServer... auctions)
-			throws XMPPException {
+			throws Exception {
 		activity = (MainActivity) solo.getCurrentActivity();
 		activity.main(new String[] { XMPP_HOSTNAME, SNIPER_XMPP_ID,
 				SNIPER_XMPP_PASSWORD });
