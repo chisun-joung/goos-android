@@ -20,8 +20,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.jayway.android.robotium.solo.Solo;
-import com.jooyunghan.auctionsniper.MainActivity;
 import com.jooyunghan.auctionsniper.R;
+import com.jooyunghan.auctionsniper.ui.MainActivity;
 import com.objogate.wl.Probe;
 import com.objogate.wl.internal.Timeout;
 

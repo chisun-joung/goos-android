@@ -1,7 +1,16 @@
-package com.jooyunghan.auctionsniper;
+package com.jooyunghan.auctionsniper.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.jooyunghan.auctionsniper.Defect;
+import com.jooyunghan.auctionsniper.R;
+import com.jooyunghan.auctionsniper.SniperListener;
+import com.jooyunghan.auctionsniper.SniperSnapshot;
+import com.jooyunghan.auctionsniper.SniperState;
+import com.jooyunghan.auctionsniper.R.id;
+import com.jooyunghan.auctionsniper.R.layout;
+import com.jooyunghan.auctionsniper.R.string;
 
 import android.content.Context;
 import android.view.LayoutInflater;

@@ -4,7 +4,7 @@ import android.test.AndroidTestCase;
 
 import com.jooyunghan.auctionsniper.Defect;
 import com.jooyunghan.auctionsniper.SniperSnapshot;
-import com.jooyunghan.auctionsniper.SnipersAdapter;
+import com.jooyunghan.auctionsniper.ui.SnipersAdapter;
 
 public class SnipersAdapterTest extends AndroidTestCase {
 	protected boolean onChangedCalled = false;

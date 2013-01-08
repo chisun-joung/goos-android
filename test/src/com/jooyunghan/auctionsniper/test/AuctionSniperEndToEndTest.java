@@ -3,7 +3,7 @@ package com.jooyunghan.auctionsniper.test;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.jayway.android.robotium.solo.Solo;
-import com.jooyunghan.auctionsniper.MainActivity;
+import com.jooyunghan.auctionsniper.ui.MainActivity;
 
 public class AuctionSniperEndToEndTest extends
 		ActivityInstrumentationTestCase2<MainActivity> {

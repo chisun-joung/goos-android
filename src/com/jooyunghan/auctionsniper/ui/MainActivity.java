@@ -1,4 +1,4 @@
-package com.jooyunghan.auctionsniper;
+package com.jooyunghan.auctionsniper.ui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,14 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.jooyunghan.auctionsniper.Auction;
+import com.jooyunghan.auctionsniper.AuctionMessageTranslator;
+import com.jooyunghan.auctionsniper.AuctionSniper;
+import com.jooyunghan.auctionsniper.R;
+import com.jooyunghan.auctionsniper.SniperSnapshot;
+import com.jooyunghan.auctionsniper.UIThreadSniperListener;
+import com.jooyunghan.auctionsniper.UserRequestListener;
+import com.jooyunghan.auctionsniper.XMPPAuction;
 import com.jooyunghan.util.Announcer;
 
 public class MainActivity extends Activity {
