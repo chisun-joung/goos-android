@@ -79,6 +79,8 @@ public class SnipersAdapter extends BaseAdapter implements SniperListener,
 			return context.getString(R.string.status_bidding);
 		case WINNING:
 			return context.getString(R.string.status_winning);
+		case LOSING:
+			return context.getString(R.string.status_losing);
 		case LOST:
 			return context.getString(R.string.status_lost);
 		case WON:

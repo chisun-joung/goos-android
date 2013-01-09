@@ -40,8 +40,21 @@ public class AuctionSniperDriver {
 
 	public void startBiddingFor(String itemId) {
 		solo.clearEditText(itemIdField());
+		solo.clearEditText(stopPriceField());
 		solo.enterText(itemIdField(), itemId);
 		solo.clickOnView(bidButton());
+	}
+
+	public void startBiddingFor(String itemId, int stopPrice) {
+		solo.clearEditText(itemIdField());
+		solo.clearEditText(stopPriceField());
+		solo.enterText(itemIdField(), itemId);
+		solo.enterText(stopPriceField(), String.valueOf(stopPrice));
+		solo.clickOnView(bidButton());
+	}
+
+	private EditText stopPriceField() {
+		return (EditText) solo.getView(R.id.stop_price_text);
 	}
 
 	private View bidButton() {
@@ -54,6 +67,11 @@ public class AuctionSniperDriver {
 
 	public void showsSniperState(String status) throws InterruptedException {
 		hasItemWithText(R.id.list, status);
+	}
+
+	public void showsSniperState(String itemId, String statusText)
+			throws InterruptedException {
+		hasItemWithText(R.id.list, itemId, statusText);
 	}
 
 	public void showsSniperState(String itemId, int lastPrice, int lastBid,
@@ -195,4 +213,6 @@ public class AuctionSniperDriver {
 
 		queue.take();
 	}
+
+
 }

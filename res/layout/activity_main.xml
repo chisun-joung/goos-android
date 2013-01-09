@@ -9,26 +9,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/item_id_text" >
+        android:layout_below="@+id/stop_price_text" >
+
     </ListView>
+
+    <EditText
+        android:id="@+id/stop_price_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/item_id_text"
+        android:layout_below="@+id/item_id_text"
+        android:ems="10"
+        android:hint="@string/stop_price"
+        android:inputType="number" />
 
     <EditText
         android:id="@+id/item_id_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/bid_button"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/bid_button"
-        android:hint="@string/item_id_label" >
-
-        <requestFocus />
-    </EditText>
+        android:ems="10"
+        android:hint="@string/item_id_label" />
 
     <Button
         android:id="@+id/bid_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/stop_price_text"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:text="@string/join_auction" />
