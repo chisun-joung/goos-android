@@ -1,14 +1,8 @@
 package com.jooyunghan.auctionsniper.testtest;
 
-import org.jivesoftware.smack.Chat;
-import org.jivesoftware.smack.ConnectionConfiguration;
-import org.jivesoftware.smack.XMPPConnection;
-
 import android.test.AndroidTestCase;
 
 import com.jooyunghan.auctionsniper.test.FakeAuctionServer;
-
-import junit.framework.TestCase;
 
 public class FakeTest extends AndroidTestCase {
 	public void testFakeCanConnectToServer() throws Exception {

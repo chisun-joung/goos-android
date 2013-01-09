@@ -2,10 +2,8 @@ package com.jooyunghan.auctionsniper.unittest;
 
 import static org.hamcrest.Matchers.equalTo;
 import android.test.ActivityInstrumentationTestCase2;
-import android.widget.ListView;
 
 import com.jayway.android.robotium.solo.Solo;
-import com.jooyunghan.auctionsniper.R;
 import com.jooyunghan.auctionsniper.UserRequestListener;
 import com.jooyunghan.auctionsniper.test.AuctionSniperDriver;
 import com.jooyunghan.auctionsniper.ui.MainActivity;
@@ -25,11 +23,6 @@ public class MainActivityTest extends
 		super.setUp();
 		activity = getActivity();
 		solo = new Solo(getInstrumentation(), activity);
-	}
-
-	public void testStatusShowsInListView() throws Exception {
-		ListView list = (ListView) activity.findViewById(R.id.list);
-		assertNotNull(list);
 	}
 
 	public void testMakesUserRequestWhenJoinButtonClicked() throws Exception {

@@ -2,8 +2,6 @@ package com.jooyunghan.auctionsniper.test;
 
 import static com.jooyunghan.auctionsniper.ui.SnipersAdapter.textFor;
 
-import org.jivesoftware.smack.XMPPException;
-
 import com.jayway.android.robotium.solo.Solo;
 import com.jooyunghan.auctionsniper.SniperState;
 import com.jooyunghan.auctionsniper.ui.MainActivity;

@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.jooyunghan.auctionsniper.AuctionSniper;
 import com.jooyunghan.auctionsniper.Defect;
+import com.jooyunghan.auctionsniper.PortfolioListener;
 import com.jooyunghan.auctionsniper.R;
 import com.jooyunghan.auctionsniper.SniperListener;
 import com.jooyunghan.auctionsniper.SniperSnapshot;
@@ -20,10 +21,9 @@ import com.jooyunghan.auctionsniper.SniperState;
 import com.jooyunghan.auctionsniper.UIThreadSniperListener;
 
 public class SnipersAdapter extends BaseAdapter implements SniperListener,
-		SniperCollector {
+		PortfolioListener {
 	private Activity context;
 	private List<SniperSnapshot> snapshots = new ArrayList<SniperSnapshot>();
-	private final List<AuctionSniper> notToBeGCd = new ArrayList<AuctionSniper>();
 
 	public SnipersAdapter(Activity context) {
 		this.context = context;
@@ -94,6 +94,12 @@ public class SnipersAdapter extends BaseAdapter implements SniperListener,
 		notifyDataSetChanged();
 	}
 
+	@Override
+	public void sniperAdded(AuctionSniper sniper) {
+		addSniperSnapshot(sniper.getSnapshot());
+		sniper.addSniperListener(new UIThreadSniperListener(context, this));
+	}
+
 	private int rowMatching(SniperSnapshot newSnapshot) {
 		for (int i = 0; i < snapshots.size(); i++) {
 			SniperSnapshot snapshot = snapshots.get(i);
@@ -104,15 +110,9 @@ public class SnipersAdapter extends BaseAdapter implements SniperListener,
 		throw new Defect("Cannot find match for " + newSnapshot);
 	}
 
-	public void addSniper(SniperSnapshot snapshot) {
+	public void addSniperSnapshot(SniperSnapshot snapshot) {
 		snapshots.add(snapshot);
 		notifyDataSetChanged();
 	}
 
-	@Override
-	public void addSniper(AuctionSniper sniper) {
-		notToBeGCd.add(sniper);
-		addSniper(sniper.getSnapshot());
-		sniper.addSniperListener(new UIThreadSniperListener(context, this));
-	}
 }

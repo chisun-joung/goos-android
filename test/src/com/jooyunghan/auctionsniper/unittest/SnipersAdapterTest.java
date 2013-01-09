@@ -1,15 +1,13 @@
 package com.jooyunghan.auctionsniper.unittest;
-
 import android.database.DataSetObserver;
-import android.test.ActivityInstrumentationTestCase2;
+import android.test.ActivityUnitTestCase;
 
 import com.jooyunghan.auctionsniper.Defect;
 import com.jooyunghan.auctionsniper.SniperSnapshot;
 import com.jooyunghan.auctionsniper.ui.MainActivity;
 import com.jooyunghan.auctionsniper.ui.SnipersAdapter;
 
-public class SnipersAdapterTest extends
-		ActivityInstrumentationTestCase2<MainActivity> {
+public class SnipersAdapterTest extends ActivityUnitTestCase<MainActivity> {
 	private boolean onChangedCalled = false;
 	private SnipersAdapter model;
 	private DataSetObserver observer = new DataSetObserver() {
@@ -18,7 +16,7 @@ public class SnipersAdapterTest extends
 			onChangedCalled = true;
 		}
 	};
-
+	
 	public SnipersAdapterTest() {
 		super(MainActivity.class);
 	}
@@ -34,7 +32,7 @@ public class SnipersAdapterTest extends
 		SniperSnapshot joining = SniperSnapshot.joining("item id");
 		SniperSnapshot bidding = joining.bidding(555, 666);
 
-		model.addSniper(joining);
+		model.addSniperSnapshot(joining);
 		onChangedCalled = false; // checking-true is not relevant to this test
 
 		model.sniperStateChanged(bidding);
@@ -48,7 +46,7 @@ public class SnipersAdapterTest extends
 
 		assertEquals(0, model.getCount());
 
-		model.addSniper(joining);
+		model.addSniperSnapshot(joining);
 
 		assertTrue("onChanged should be called", onChangedCalled);
 		assertEquals(1, model.getCount());
@@ -58,8 +56,8 @@ public class SnipersAdapterTest extends
 	public void testHoldsSnipersInAdditionOrder() throws Exception {
 		SniperSnapshot item0 = SniperSnapshot.joining("item 0");
 		SniperSnapshot item1 = SniperSnapshot.joining("item 1");
-		model.addSniper(item0);
-		model.addSniper(item1);
+		model.addSniperSnapshot(item0);
+		model.addSniperSnapshot(item1);
 		assertEquals(item0, model.getItem(0));
 		assertEquals(item1, model.getItem(1));
 	}
@@ -68,19 +66,18 @@ public class SnipersAdapterTest extends
 		SniperSnapshot item0 = SniperSnapshot.joining("item 0");
 		SniperSnapshot item1 = SniperSnapshot.joining("item 1");
 		SniperSnapshot bidding1 = item1.bidding(10, 20);
-		model.addSniper(item0);
-		model.addSniper(item1);
+		model.addSniperSnapshot(item0);
+		model.addSniperSnapshot(item1);
 		model.sniperStateChanged(bidding1);
 		assertEquals(item0, model.getItem(0));
 		assertEquals(bidding1, model.getItem(1));
 	}
 
-	public void testThrowsDefectIfNoExistingSniperForAnUpdate()
-			throws Exception {
+	public void testThrowsDefectIfNoExistingSniperForAnUpdate() throws Exception {
 		SniperSnapshot item0 = SniperSnapshot.joining("item 0");
 		SniperSnapshot item1 = SniperSnapshot.joining("item 1");
 		SniperSnapshot bidding1 = item1.bidding(10, 20);
-		model.addSniper(item0);
+		model.addSniperSnapshot(item0);
 		try {
 			model.sniperStateChanged(bidding1);
 			fail("Should throw Defect");

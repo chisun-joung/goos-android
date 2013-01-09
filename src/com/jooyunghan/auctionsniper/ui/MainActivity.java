@@ -1,10 +1,7 @@
 package com.jooyunghan.auctionsniper.ui;
 
-
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -12,6 +9,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.jooyunghan.auctionsniper.R;
+import com.jooyunghan.auctionsniper.SniperPortfolio;
 import com.jooyunghan.auctionsniper.UserRequestListener;
 import com.jooyunghan.auctionsniper.xmpp.XMPPAuctionHouse;
 import com.jooyunghan.util.Announcer;
@@ -23,14 +21,16 @@ public class MainActivity extends Activity {
 	private SnipersAdapter snipers;
 	private final Announcer<UserRequestListener> userRequests = Announcer
 			.to(UserRequestListener.class);
+	private final SniperPortfolio portfolio = new SniperPortfolio();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		final ListView list = (ListView) findViewById(R.id.list);
 		snipers = new SnipersAdapter(this);
+		portfolio.addPortfolioListener(snipers);
+		final ListView list = (ListView) findViewById(R.id.list);
 		list.setAdapter(snipers);
 
 		final TextView itemIdField = (TextView) findViewById(R.id.item_id_text);
@@ -44,36 +44,11 @@ public class MainActivity extends Activity {
 		});
 	}
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		// if (connection != null && connection.isConnected()) {
-		// connection.disconnect();
-		// connection = null;
-		// Log.d("han", "disconnected");
-		// }
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.menu_join) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
 	// test-only method (called from test)
 	public void main(final String[] args) throws Exception {
 		final XMPPAuctionHouse auctionHouse = new XMPPAuctionHouse(
 				args[ARG_HOSTNAME], args[ARG_USERNAME], args[ARG_PASSWORD]);
-
-		addUserRequestListener(new SniperLaucher(auctionHouse, snipers));
+		addUserRequestListener(new SniperLaucher(auctionHouse, portfolio));
 	}
 
 	public void addUserRequestListener(UserRequestListener userRequestListener) {
