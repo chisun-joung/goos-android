@@ -1,7 +1,5 @@
 package com.jooyunghan.auctionsniper.ui;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -13,11 +11,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.jooyunghan.auctionsniper.Auction;
-import com.jooyunghan.auctionsniper.AuctionSniper;
 import com.jooyunghan.auctionsniper.R;
-import com.jooyunghan.auctionsniper.SniperSnapshot;
-import com.jooyunghan.auctionsniper.UIThreadSniperListener;
 import com.jooyunghan.auctionsniper.UserRequestListener;
 import com.jooyunghan.auctionsniper.xmpp.XMPPAuctionHouse;
 import com.jooyunghan.util.Announcer;
@@ -26,11 +20,9 @@ public class MainActivity extends Activity {
 	private static final int ARG_HOSTNAME = 0;
 	private static final int ARG_USERNAME = 1;
 	private static final int ARG_PASSWORD = 2;
-
+	private SnipersAdapter snipers;
 	private final Announcer<UserRequestListener> userRequests = Announcer
 			.to(UserRequestListener.class);
-	private List<Auction> notToBeGCd = new ArrayList<Auction>();
-	private SnipersAdapter snipers;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,18 +73,7 @@ public class MainActivity extends Activity {
 		final XMPPAuctionHouse auctionHouse = new XMPPAuctionHouse(
 				args[ARG_HOSTNAME], args[ARG_USERNAME], args[ARG_PASSWORD]);
 
-		addUserRequestListener(new UserRequestListener() {
-			@Override
-			public void joinAuction(String itemId) {
-				snipers.addSniper(SniperSnapshot.joining(itemId));
-				Auction auction = auctionHouse.auctionFor(itemId);
-				notToBeGCd.add(auction);
-				auction.addAuctionEventListener(new AuctionSniper(itemId,
-						auction, new UIThreadSniperListener(MainActivity.this,
-								snipers)));
-				auction.join();
-			}
-		});
+		addUserRequestListener(new SniperLaucher(auctionHouse, snipers));
 	}
 
 	public void addUserRequestListener(UserRequestListener userRequestListener) {

@@ -1,14 +1,16 @@
 package com.jooyunghan.auctionsniper;
 
+import com.jooyunghan.util.Announcer;
+
 public class AuctionSniper implements AuctionEventListener {
 
-	private SniperListener sniperListener;
+	private Announcer<SniperListener> sniperListeners = Announcer
+			.to(SniperListener.class);
 	private Auction auction;
 	private SniperSnapshot snapshot;
 
-	public AuctionSniper(String itemId, Auction auction, SniperListener sniperListener) {
+	public AuctionSniper(String itemId, Auction auction) {
 		this.auction = auction;
-		this.sniperListener = sniperListener;
 		this.snapshot = SniperSnapshot.joining(itemId);
 	}
 
@@ -33,7 +35,19 @@ public class AuctionSniper implements AuctionEventListener {
 		notifyChanges();
 	}
 
+	public SniperSnapshot getSnapshot() {
+		return snapshot;
+	}
+
+	public String getItemId() {
+		return snapshot.itemId;
+	}
+
 	private void notifyChanges() {
-		sniperListener.sniperStateChanged(snapshot);
+		sniperListeners.announce().sniperStateChanged(snapshot);
+	}
+
+	public void addSniperListener(SniperListener listener) {
+		sniperListeners.addListener(listener);
 	}
 }

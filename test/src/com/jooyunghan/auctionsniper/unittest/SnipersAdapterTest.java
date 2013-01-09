@@ -1,15 +1,17 @@
 package com.jooyunghan.auctionsniper.unittest;
+
 import android.database.DataSetObserver;
-import android.test.AndroidTestCase;
+import android.test.ActivityInstrumentationTestCase2;
 
 import com.jooyunghan.auctionsniper.Defect;
 import com.jooyunghan.auctionsniper.SniperSnapshot;
+import com.jooyunghan.auctionsniper.ui.MainActivity;
 import com.jooyunghan.auctionsniper.ui.SnipersAdapter;
 
-public class SnipersAdapterTest extends AndroidTestCase {
-	protected boolean onChangedCalled = false;
-	SnipersAdapter model;
-
+public class SnipersAdapterTest extends
+		ActivityInstrumentationTestCase2<MainActivity> {
+	private boolean onChangedCalled = false;
+	private SnipersAdapter model;
 	private DataSetObserver observer = new DataSetObserver() {
 		@Override
 		public void onChanged() {
@@ -17,10 +19,14 @@ public class SnipersAdapterTest extends AndroidTestCase {
 		}
 	};
 
+	public SnipersAdapterTest() {
+		super(MainActivity.class);
+	}
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		model = new SnipersAdapter(getContext());
+		model = new SnipersAdapter(getActivity());
 		model.registerDataSetObserver(observer);
 	}
 
@@ -69,7 +75,8 @@ public class SnipersAdapterTest extends AndroidTestCase {
 		assertEquals(bidding1, model.getItem(1));
 	}
 
-	public void testThrowsDefectIfNoExistingSniperForAnUpdate() throws Exception {
+	public void testThrowsDefectIfNoExistingSniperForAnUpdate()
+			throws Exception {
 		SniperSnapshot item0 = SniperSnapshot.joining("item 0");
 		SniperSnapshot item1 = SniperSnapshot.joining("item 1");
 		SniperSnapshot bidding1 = item1.bidding(10, 20);

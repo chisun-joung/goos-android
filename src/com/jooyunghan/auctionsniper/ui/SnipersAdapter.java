@@ -3,15 +3,7 @@ package com.jooyunghan.auctionsniper.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.jooyunghan.auctionsniper.Defect;
-import com.jooyunghan.auctionsniper.R;
-import com.jooyunghan.auctionsniper.SniperListener;
-import com.jooyunghan.auctionsniper.SniperSnapshot;
-import com.jooyunghan.auctionsniper.SniperState;
-import com.jooyunghan.auctionsniper.R.id;
-import com.jooyunghan.auctionsniper.R.layout;
-import com.jooyunghan.auctionsniper.R.string;
-
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,12 +11,21 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class SnipersAdapter extends BaseAdapter implements SniperListener {
+import com.jooyunghan.auctionsniper.AuctionSniper;
+import com.jooyunghan.auctionsniper.Defect;
+import com.jooyunghan.auctionsniper.R;
+import com.jooyunghan.auctionsniper.SniperListener;
+import com.jooyunghan.auctionsniper.SniperSnapshot;
+import com.jooyunghan.auctionsniper.SniperState;
+import com.jooyunghan.auctionsniper.UIThreadSniperListener;
 
-	private Context context;
+public class SnipersAdapter extends BaseAdapter implements SniperListener,
+		SniperCollector {
+	private Activity context;
 	private List<SniperSnapshot> snapshots = new ArrayList<SniperSnapshot>();
+	private final List<AuctionSniper> notToBeGCd = new ArrayList<AuctionSniper>();
 
-	public SnipersAdapter(Context context) {
+	public SnipersAdapter(Activity context) {
 		this.context = context;
 	}
 
@@ -108,4 +109,10 @@ public class SnipersAdapter extends BaseAdapter implements SniperListener {
 		notifyDataSetChanged();
 	}
 
+	@Override
+	public void addSniper(AuctionSniper sniper) {
+		notToBeGCd.add(sniper);
+		addSniper(sniper.getSnapshot());
+		sniper.addSniperListener(new UIThreadSniperListener(context, this));
+	}
 }

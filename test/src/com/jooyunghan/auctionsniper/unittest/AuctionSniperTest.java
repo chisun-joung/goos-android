@@ -22,8 +22,13 @@ public class AuctionSniperTest extends TestCase {
 	private final States sniperState = context.states("sniper");
 	private final Auction auction = context.mock(Auction.class);
 	private final SniperListener sniperListener = context.mock(SniperListener.class);
-	private final AuctionSniper sniper = new AuctionSniper(ITEM_ID, auction,
-			sniperListener);
+	private final AuctionSniper sniper = new AuctionSniper(ITEM_ID, auction);
+
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		sniper.addSniperListener(sniperListener);
+	}
 
 	@Override
 	protected void tearDown() throws Exception {
