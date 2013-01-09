@@ -30,7 +30,7 @@ public class MainActivityTest extends
 		final ValueMatcherProbe<String> buttonProbe = new ValueMatcherProbe<String>(
 				equalTo("an item-id"), "join request for");
 
-		activity.addUserRequestListener(new UserRequestListener() {
+		activity.setUserRequestListener(new UserRequestListener() {
 			@Override
 			public void joinAuction(String itemId) {
 				buttonProbe.setReceivedValue(itemId);

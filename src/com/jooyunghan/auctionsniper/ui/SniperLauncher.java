@@ -5,11 +5,11 @@ import com.jooyunghan.auctionsniper.AuctionHouse;
 import com.jooyunghan.auctionsniper.AuctionSniper;
 import com.jooyunghan.auctionsniper.UserRequestListener;
 
-public final class SniperLaucher implements UserRequestListener {
+public final class SniperLauncher implements UserRequestListener {
 	private final AuctionHouse auctionHouse;
 	private final SniperCollector collector;
 
-	public SniperLaucher(AuctionHouse auctionHouse, SniperCollector collector) {
+	public SniperLauncher(AuctionHouse auctionHouse, SniperCollector collector) {
 		this.auctionHouse = auctionHouse;
 		this.collector = collector;
 	}

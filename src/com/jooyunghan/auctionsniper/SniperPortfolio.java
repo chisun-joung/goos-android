@@ -12,7 +12,14 @@ public class SniperPortfolio implements SniperCollector {
 			.to(PortfolioListener.class);
 
 	public void addPortfolioListener(PortfolioListener listener) {
+		for (AuctionSniper sniper: snipers) {
+			listener.sniperAdded(sniper);
+		}
 		listeners.addListener(listener);
+	}
+
+	public void removePortfolioListener(PortfolioListener listener) {
+		listeners.removeListener(listener);
 	}
 
 	@Override
@@ -20,5 +27,10 @@ public class SniperPortfolio implements SniperCollector {
 		snipers.add(sniper);
 		listeners.announce().sniperAdded(sniper);
 	}
+
+	public void removeAllSnipers() {
+		snipers.clear();
+	}
+
 
 }

@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.jayway.android.robotium.solo.Solo;
+import com.jooyunghan.auctionsniper.ApplicationMain;
 import com.jooyunghan.auctionsniper.R;
 import com.jooyunghan.auctionsniper.ui.MainActivity;
 import com.objogate.wl.Probe;
@@ -123,6 +124,9 @@ public class AuctionSniperDriver {
 
 	public void dispose() {
 		Log.d("han", "dispose");
+		Activity activity = solo.getCurrentActivity();
+		ApplicationMain main = (ApplicationMain) activity.getApplication();
+		main.dispose();
 	}
 
 	public void check(Probe probe) {

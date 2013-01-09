@@ -13,9 +13,9 @@ import com.jooyunghan.auctionsniper.Auction;
 import com.jooyunghan.auctionsniper.AuctionHouse;
 import com.jooyunghan.auctionsniper.AuctionSniper;
 import com.jooyunghan.auctionsniper.ui.SniperCollector;
-import com.jooyunghan.auctionsniper.ui.SniperLaucher;
+import com.jooyunghan.auctionsniper.ui.SniperLauncher;
 
-public class SniperLaucherTest extends TestCase {
+public class SniperLauncherTest extends TestCase {
 	private final Mockery context = new Mockery();
 	private final Auction auction = context.mock(Auction.class);
 	private final AuctionHouse auctionHouse = context.mock(AuctionHouse.class);
@@ -24,7 +24,7 @@ public class SniperLaucherTest extends TestCase {
 	protected final States auctionStates = context.states("auction state")
 			.startsAs("not joined");
 
-	private SniperLaucher launcher = new SniperLaucher(auctionHouse, collector);
+	private SniperLauncher launcher = new SniperLauncher(auctionHouse, collector);
 
 	public void testAddsNewSniperToCollectorAndThenJoinsAuction()
 			throws Exception {
