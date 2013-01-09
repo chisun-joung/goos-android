@@ -11,6 +11,7 @@ import org.jivesoftware.smack.XMPPException;
 
 import android.util.Log;
 
+import com.jooyunghan.auctionsniper.Item;
 import com.jooyunghan.auctionsniper.xmpp.XMPPAuction;
 
 public class FakeAuctionServer {

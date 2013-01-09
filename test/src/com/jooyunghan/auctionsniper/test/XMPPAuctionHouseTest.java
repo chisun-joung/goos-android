@@ -7,6 +7,7 @@ import junit.framework.TestCase;
 
 import com.jooyunghan.auctionsniper.Auction;
 import com.jooyunghan.auctionsniper.AuctionEventListener;
+import com.jooyunghan.auctionsniper.Item;
 import com.jooyunghan.auctionsniper.xmpp.XMPPAuctionHouse;
 
 public class XMPPAuctionHouseTest extends TestCase {
@@ -26,7 +27,7 @@ public class XMPPAuctionHouseTest extends TestCase {
 		CountDownLatch auctionWasClosed = new CountDownLatch(1);
 		server.startSellingItem();
 
-		Auction auction = auctionHouse.auctionFor(server.getItemId());
+		Auction auction = auctionHouse.auctionFor(new Item(server.getItemId()));
 		auction.addAuctionEventListener(auctionClosedListener(auctionWasClosed));
 
 		auction.join();

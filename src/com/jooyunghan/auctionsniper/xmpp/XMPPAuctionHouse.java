@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.jooyunghan.auctionsniper.Auction;
 import com.jooyunghan.auctionsniper.AuctionHouse;
+import com.jooyunghan.auctionsniper.Item;
 
 public class XMPPAuctionHouse implements AuctionHouse {
 	private static final String ITEM_ID_AS_LOGIN = "auction-%s";
@@ -23,9 +24,9 @@ public class XMPPAuctionHouse implements AuctionHouse {
 	}
 
 	@Override
-	public Auction auctionFor(String itemId) {
+	public Auction auctionFor(Item item) {
 		final Chat chat = connection.getChatManager().createChat(
-				auctionId(itemId, connection), null);
+				auctionId(item.identifier, connection), null);
 		return new XMPPAuction(chat, connection.getUser());
 	}
 

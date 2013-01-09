@@ -12,17 +12,18 @@ import org.jmock.States;
 import com.jooyunghan.auctionsniper.Auction;
 import com.jooyunghan.auctionsniper.AuctionEventListener.PriceSource;
 import com.jooyunghan.auctionsniper.AuctionSniper;
+import com.jooyunghan.auctionsniper.Item;
 import com.jooyunghan.auctionsniper.SniperListener;
 import com.jooyunghan.auctionsniper.SniperSnapshot;
 import com.jooyunghan.auctionsniper.SniperState;
 
 public class AuctionSniperTest extends TestCase {
-	private static final String ITEM_ID = "item-id";
+	private static final Item ITEM = new Item("item-id");
 	private final Mockery context = new Mockery();
 	private final States sniperState = context.states("sniper");
 	private final Auction auction = context.mock(Auction.class);
 	private final SniperListener sniperListener = context.mock(SniperListener.class);
-	private final AuctionSniper sniper = new AuctionSniper(ITEM_ID, auction);
+	private final AuctionSniper sniper = new AuctionSniper(ITEM, auction);
 
 	@Override
 	protected void setUp() throws Exception {
@@ -39,7 +40,7 @@ public class AuctionSniperTest extends TestCase {
 		context.checking(new Expectations() {
 			{
 				atLeast(1).of(sniperListener).sniperStateChanged(
-						new SniperSnapshot(ITEM_ID, 0, 0, SniperState.LOST));
+						new SniperSnapshot(ITEM.identifier, 0, 0, SniperState.LOST));
 			}
 		});
 		sniper.auctionClosed();
@@ -74,7 +75,7 @@ public class AuctionSniperTest extends TestCase {
 						with(aSniperThatIs(SniperState.BIDDING)));
 				then(sniperState.is("bidding"));
 				atLeast(1).of(sniperListener).sniperStateChanged(
-						new SniperSnapshot(ITEM_ID, 135, 135,
+						new SniperSnapshot(ITEM.identifier, 135, 135,
 								SniperState.WINNING));
 				when(sniperState.is("bidding"));
 			}
@@ -95,7 +96,7 @@ public class AuctionSniperTest extends TestCase {
 			{
 				one(auction).bid(bid);
 				atLeast(1).of(sniperListener).sniperStateChanged(
-						new SniperSnapshot(ITEM_ID, price, bid,
+						new SniperSnapshot(ITEM.identifier, price, bid,
 								SniperState.BIDDING));
 			}
 		});

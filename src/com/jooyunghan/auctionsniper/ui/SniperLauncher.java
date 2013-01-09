@@ -3,6 +3,7 @@ package com.jooyunghan.auctionsniper.ui;
 import com.jooyunghan.auctionsniper.Auction;
 import com.jooyunghan.auctionsniper.AuctionHouse;
 import com.jooyunghan.auctionsniper.AuctionSniper;
+import com.jooyunghan.auctionsniper.Item;
 import com.jooyunghan.auctionsniper.UserRequestListener;
 
 public final class SniperLauncher implements UserRequestListener {
@@ -15,9 +16,9 @@ public final class SniperLauncher implements UserRequestListener {
 	}
 
 	@Override
-	public void joinAuction(String itemId) {
-		Auction auction = auctionHouse.auctionFor(itemId);
-		AuctionSniper sniper = new AuctionSniper(itemId, auction);
+	public void joinAuction(Item item) {
+		Auction auction = auctionHouse.auctionFor(item);
+		AuctionSniper sniper = new AuctionSniper(item, auction);
 		auction.addAuctionEventListener(sniper);
 		collector.addSniper(sniper);
 		auction.join();
