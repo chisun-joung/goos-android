@@ -24,10 +24,10 @@ public class XMPPAuctionHouseTest extends TestCase {
 
 	public void testReceivesEventsFromAuctionServerAfterJoining()
 			throws Exception {
-		CountDownLatch auctionWasClosed = new CountDownLatch(1);
 		server.startSellingItem();
-
 		Auction auction = auctionHouse.auctionFor(new Item(server.getItemId()));
+
+		CountDownLatch auctionWasClosed = new CountDownLatch(1);
 		auction.addAuctionEventListener(auctionClosedListener(auctionWasClosed));
 
 		auction.join();
@@ -35,7 +35,7 @@ public class XMPPAuctionHouseTest extends TestCase {
 		server.announceClosed();
 
 		assertTrue("should have been closed.",
-				auctionWasClosed.await(2, TimeUnit.SECONDS));
+				auctionWasClosed.await(3, TimeUnit.SECONDS));
 	}
 
 	private AuctionEventListener auctionClosedListener(
