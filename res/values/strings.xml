@@ -11,6 +11,7 @@
     <string name="status_losing">Losing</string>
     <string name="status_lost">Lost</string>
     <string name="status_won">Won</string>
+    <string name="status_failed">Failed</string>
     <string name="join_auction">Join Auction</string>
     <string name="item_id_label">Item ID</string>
     <string name="stop_price">Stop Price</string>

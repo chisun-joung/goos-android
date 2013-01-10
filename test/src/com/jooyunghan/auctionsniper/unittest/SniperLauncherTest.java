@@ -28,6 +28,12 @@ public class SniperLauncherTest extends TestCase {
 	private SniperLauncher launcher = new SniperLauncher(auctionHouse,
 			collector);
 
+	@Override
+	protected void tearDown() throws Exception {
+		context.assertIsSatisfied();
+		super.tearDown();
+	}
+
 	public void testAddsNewSniperToCollectorAndThenJoinsAuction()
 			throws Exception {
 		final Item item = new Item("item 123", 123);

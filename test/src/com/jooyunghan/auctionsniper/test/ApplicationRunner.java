@@ -17,7 +17,7 @@ public class ApplicationRunner {
 			int stopPrice) throws InterruptedException {
 		startSniper(solo);
 		final String itemId = auction.getItemId();
-		driver.startBiddingFor(itemId , stopPrice);
+		driver.startBiddingFor(itemId, stopPrice);
 		driver.showsSniperState(itemId, 0, 0, textFor(SniperState.JOINING));
 	}
 
@@ -51,6 +51,12 @@ public class ApplicationRunner {
 				textFor(SniperState.WON));
 	}
 
+	public void showsSniperHasFailed(FakeAuctionServer auction)
+			throws InterruptedException {
+		driver.showsSniperState(auction.getItemId(), 0, 0,
+				textFor(SniperState.FAILED));
+	}
+
 	public void hasShownSniperIsBidding(FakeAuctionServer auction,
 			int lastPrice, int lastBid) throws InterruptedException {
 		driver.showsSniperState(auction.getItemId(), lastPrice, lastBid,
@@ -67,6 +73,12 @@ public class ApplicationRunner {
 			int lastPrice, int lastBid) throws InterruptedException {
 		driver.showsSniperState(auction.getItemId(), lastPrice, lastBid,
 				textFor(SniperState.LOSING));
+	}
+
+	public void reportsInvalidMessage(FakeAuctionServer auction,
+			String brokenMessage) {
+		// TODO how to check??
+
 	}
 
 	public void stop() {

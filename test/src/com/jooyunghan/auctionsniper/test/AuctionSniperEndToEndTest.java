@@ -1,5 +1,7 @@
 package com.jooyunghan.auctionsniper.test;
 
+import org.jivesoftware.smack.XMPPException;
+
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.jayway.android.robotium.solo.Solo;
@@ -107,6 +109,34 @@ public class AuctionSniperEndToEndTest extends
 
 		auction.announceClosed();
 		application.showsSniperHasLostAuction(auction);
+	}
+
+	public void testSniperReportsInvalidAuctionMessageAndStopsRespondingToEvents()
+			throws Exception {
+		final String brokenMessage = "a broken message";
+		auction.startSellingItem();
+		auction2.startSellingItem();
+
+		application.startBiddingIn(solo, auction, auction2);
+		auction.hasReceivedJoinRequestFrom(ApplicationRunner.SNIPER_XMPP_ID);
+
+		auction.reportPrice(500, 20, "other bidder");
+		auction.hasReceivedBid(520, ApplicationRunner.SNIPER_XMPP_ID);
+
+		auction.sendInvalidMessageContaining(brokenMessage);
+		application.showsSniperHasFailed(auction);
+
+		auction.reportPrice(520, 21, "other bidder");
+		waitForAnotherAuctionEvent();
+
+		application.reportsInvalidMessage(auction, brokenMessage);
+		application.showsSniperHasFailed(auction);
+	}
+
+	private void waitForAnotherAuctionEvent() throws Exception {
+		auction2.hasReceivedJoinRequestFrom(ApplicationRunner.SNIPER_XMPP_ID);
+		auction2.reportPrice(600, 6, "other bidder");
+		application.hasShownSniperIsBidding(auction2, 600, 606);
 	}
 
 	@Override

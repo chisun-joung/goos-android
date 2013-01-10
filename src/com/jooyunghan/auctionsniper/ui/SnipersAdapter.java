@@ -85,6 +85,8 @@ public class SnipersAdapter extends BaseAdapter implements SniperListener,
 			return context.getString(R.string.status_lost);
 		case WON:
 			return context.getString(R.string.status_won);
+		case FAILED:
+			return context.getString(R.string.status_failed);
 		}
 		throw new IllegalArgumentException("Unknown state:" + state);
 	}

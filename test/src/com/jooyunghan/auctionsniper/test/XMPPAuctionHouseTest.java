@@ -52,6 +52,11 @@ public class XMPPAuctionHouseTest extends TestCase {
 				// not implemented
 			}
 
+			@Override
+			public void auctionFailed() {
+				// not implemented
+			}
+
 		};
 	}
 

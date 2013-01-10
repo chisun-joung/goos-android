@@ -25,15 +25,13 @@ public class AuctionSniperTest extends TestCase {
 	private final SniperListener sniperListener = context
 			.mock(SniperListener.class);
 	private final AuctionSniper sniper = new AuctionSniper(ITEM, auction);
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	{
 		sniper.addSniperListener(sniperListener);
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
+		context.assertIsSatisfied();
 		super.tearDown();
 	}
 
@@ -83,10 +81,10 @@ public class AuctionSniperTest extends TestCase {
 
 	public void testReportsIsWinningWhenCurrentPriceComesFromSniper()
 			throws Exception {
+		ignoringAuction();
 		allowingSniperBidding();
 		context.checking(new Expectations() {
 			{
-				ignoring(auction);
 				atLeast(1).of(sniperListener).sniperStateChanged(
 						new SniperSnapshot(ITEM.identifier, 135, 135,
 								SniperState.WINNING));
@@ -104,7 +102,7 @@ public class AuctionSniperTest extends TestCase {
 		final int price = 1001;
 		final int increment = 25;
 		final int bid = price + increment;
-
+		ignoringAuction();
 		context.checking(new Expectations() {
 			{
 				allowing(auction).bid(bid);
@@ -115,7 +113,6 @@ public class AuctionSniperTest extends TestCase {
 		});
 
 		sniper.currentPrice(price, increment, PriceSource.FromOtherBidder);
-		context.assertIsSatisfied();
 	}
 
 	public void testDoesNotBidAndReportsLosingIfSubsequentPriceIsAboveStopPrice()
@@ -137,6 +134,7 @@ public class AuctionSniperTest extends TestCase {
 
 	public void testDoesNotBidAndReportsLosingIfFirstPriceIsAboveStopPrice()
 			throws Exception {
+		ignoringAuction();
 		context.checking(new Expectations() {
 			{
 				atLeast(1).of(sniperListener).sniperStateChanged(
@@ -148,6 +146,7 @@ public class AuctionSniperTest extends TestCase {
 	}
 
 	public void testReportsLostIfAuctionClosesWhenLosing() throws Exception {
+		ignoringAuction();
 		context.checking(new Expectations() {
 			{
 				allowing(sniperListener).sniperStateChanged(
@@ -162,12 +161,40 @@ public class AuctionSniperTest extends TestCase {
 		sniper.auctionClosed();
 	}
 
+	public void testReportsFailedIfAuctionFailesWhenBidding() throws Exception {
+		ignoringAuction();
+		allowingSniperBidding();
+		expectSniperToFailWhenItIs("bidding");
+
+		sniper.currentPrice(123, 45, PriceSource.FromOtherBidder);
+		sniper.auctionFailed();
+	}
+
+	private void ignoringAuction() {
+		context.checking(new Expectations() {
+			{
+				ignoring(auction);
+			}
+		});
+	}
+
 	private void allowingSniperBidding() {
 		context.checking(new Expectations() {
 			{
 				allowing(sniperListener).sniperStateChanged(
 						with(aSniperThatIs(SniperState.BIDDING)));
 				then(sniperState.is("bidding"));
+			}
+		});
+	}
+
+	private void expectSniperToFailWhenItIs(final String state) {
+		context.checking(new Expectations() {
+			{
+				atLeast(1).of(sniperListener).sniperStateChanged(
+						with(new SniperSnapshot(ITEM.identifier, 0, 0,
+								SniperState.FAILED)));
+				when(sniperState.is(state));
 			}
 		});
 	}

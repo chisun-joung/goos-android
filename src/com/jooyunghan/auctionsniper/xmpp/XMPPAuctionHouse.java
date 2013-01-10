@@ -25,9 +25,7 @@ public class XMPPAuctionHouse implements AuctionHouse {
 
 	@Override
 	public Auction auctionFor(Item item) {
-		final Chat chat = connection.getChatManager().createChat(
-				auctionId(item.identifier, connection), null);
-		return new XMPPAuction(chat, connection.getUser());
+		return new XMPPAuction(connection, auctionId(item.identifier, connection));
 	}
 
 	private String auctionId(String itemId, XMPPConnection connection) {

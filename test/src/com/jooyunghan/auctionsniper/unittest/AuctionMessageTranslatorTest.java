@@ -88,4 +88,29 @@ public class AuctionMessageTranslatorTest extends TestCase {
 				+ SNIPER_ID + ";");
 		translator2.processMessage(UNUSED_CHAT, message);
 	}
+
+	public void testNotifiesAuctionFailedWhenBadMessageReceived()
+			throws Exception {
+		context.checking(new Expectations() {
+			{
+				exactly(1).of(listener).auctionFailed();
+			}
+		});
+		Message message = new Message();
+		message.setBody("a bad message");
+		translator.processMessage(UNUSED_CHAT, message);
+	}
+
+	public void testNotifiesAuctionFailedWhenEventTypeIsMissing()
+			throws Exception {
+		context.checking(new Expectations() {
+			{
+				exactly(1).of(listener).auctionFailed();
+			}
+		});
+		Message message = new Message();
+		message.setBody("SOLVersion: 1.1; CurrentPrice: 192; Increment: 7; Bidder: "
+				+ SNIPER_ID + ";");
+		translator.processMessage(UNUSED_CHAT, message);
+	}
 }

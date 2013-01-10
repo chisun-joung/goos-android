@@ -1,6 +1,7 @@
 package com.jooyunghan.auctionsniper.xmpp;
 
 import org.jivesoftware.smack.Chat;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 
 import android.util.Log;
@@ -17,10 +18,35 @@ public class XMPPAuction implements Auction {
 	private Announcer<AuctionEventListener> auctionEventListeners = Announcer
 			.to(AuctionEventListener.class);
 
-	public XMPPAuction(Chat chat, String connectionId) {
-		this.chat = chat;
-		chat.addMessageListener(new AuctionMessageTranslator(connectionId,
-				auctionEventListeners.announce()));
+	public XMPPAuction(XMPPConnection connection, String auctionJID) {
+		AuctionMessageTranslator translator = translatorFor(connection);
+		this.chat = connection.getChatManager().createChat(auctionJID,
+				translator);
+		addAuctionEventListener(chatDisconnectorFor(translator));
+	}
+
+	private AuctionEventListener chatDisconnectorFor(
+			final AuctionMessageTranslator translator) {
+		return new AuctionEventListener() {
+			@Override
+			public void currentPrice(int price, int increment,
+					PriceSource source) { // empty
+			}
+
+			@Override
+			public void auctionClosed() { // empty
+			}
+
+			@Override
+			public void auctionFailed() {
+				chat.removeMessageListener(translator);
+			}
+		};
+	}
+
+	private AuctionMessageTranslator translatorFor(XMPPConnection connection) {
+		return new AuctionMessageTranslator(connection.getUser(),
+				auctionEventListeners.announce());
 	}
 
 	@Override

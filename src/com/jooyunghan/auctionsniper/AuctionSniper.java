@@ -23,6 +23,12 @@ public class AuctionSniper implements AuctionEventListener {
 	}
 
 	@Override
+	public void auctionFailed() {
+		snapshot = snapshot.failed();
+		notifyChanges();
+	}
+
+	@Override
 	public void currentPrice(int price, int increment, PriceSource source) {
 		switch (source) {
 		case FromSniper:
