@@ -5,7 +5,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
+import org.jivesoftware.smack.XMPPConnection;
+
 import com.jooyunghan.auctionsniper.ui.SniperLauncher;
+import com.jooyunghan.auctionsniper.xmpp.XMPPAuctionException;
 import com.jooyunghan.auctionsniper.xmpp.XMPPAuctionHouse;
 
 import android.app.Application;
@@ -15,16 +18,16 @@ public class ApplicationMain extends Application {
 	private final SniperPortfolio sniperPortfolio = new SniperPortfolio();
 	private AuctionHouse auctionHouse = null;
 	private SniperLauncher sniperLauncher = null;
-	private FutureTask<AuctionHouse> connection;
+	private FutureTask<XMPPConnection> connection;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		Log.d("han", "Application created");
-		connection = new FutureTask<AuctionHouse>(new Callable<AuctionHouse>() {
+		connection = new FutureTask<XMPPConnection>(new Callable<XMPPConnection>() {
 			@Override
-			public AuctionHouse call() throws Exception {
-				return new XMPPAuctionHouse("localhost", "sniper", "sniper");
+			public XMPPConnection call() throws Exception {
+				return XMPPAuctionHouse.connect("localhost", "sniper", "sniper");
 			}
 		});
 		Executors.newSingleThreadExecutor().execute(connection);
@@ -46,10 +49,12 @@ public class ApplicationMain extends Application {
 		}
 		
 		try {
-			auctionHouse = connection.get();
+			auctionHouse = new XMPPAuctionHouse(this, connection.get());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ExecutionException e) {
+			e.printStackTrace();
+		} catch (XMPPAuctionException e) {
 			e.printStackTrace();
 		}
 		sniperLauncher = new SniperLauncher(auctionHouse, sniperPortfolio);

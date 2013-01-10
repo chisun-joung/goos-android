@@ -10,6 +10,7 @@ import org.jmock.Mockery;
 import com.jooyunghan.auctionsniper.AuctionEventListener;
 import com.jooyunghan.auctionsniper.AuctionEventListener.PriceSource;
 import com.jooyunghan.auctionsniper.xmpp.AuctionMessageTranslator;
+import com.jooyunghan.auctionsniper.xmpp.XMPPFailureReporter;
 
 public class AuctionMessageTranslatorTest extends TestCase {
 	public static final Chat UNUSED_CHAT = null;
@@ -18,10 +19,12 @@ public class AuctionMessageTranslatorTest extends TestCase {
 	private final Mockery context = new Mockery();
 	private final AuctionEventListener listener = context
 			.mock(AuctionEventListener.class);
+	private final XMPPFailureReporter failureReporter = context
+			.mock(XMPPFailureReporter.class);
 	private final AuctionMessageTranslator translator = new AuctionMessageTranslator(
-			SNIPER_ID, listener);
+			SNIPER_ID, listener, failureReporter);
 	private final AuctionMessageTranslator translator2 = new AuctionMessageTranslator(
-			SNIPER_ID + STRUCTURED_ID_SUFFIX, listener);
+			SNIPER_ID + STRUCTURED_ID_SUFFIX, listener,  failureReporter);
 
 	@Override
 	protected void tearDown() throws Exception {
@@ -36,9 +39,9 @@ public class AuctionMessageTranslatorTest extends TestCase {
 				oneOf(listener).auctionClosed();
 			}
 		});
-		Message message = new Message();
-		message.setBody("SOLVersion: 1.1; Event: CLOSE;");
-		translator.processMessage(UNUSED_CHAT, message);
+
+		translator.processMessage(UNUSED_CHAT,
+				message("SOLVersion: 1.1; Event: CLOSE;"));
 	}
 
 	public void testNotifiesBidDetailsWhenCurrentPriceMessageReceivedFromOtherBidder() {
@@ -48,9 +51,9 @@ public class AuctionMessageTranslatorTest extends TestCase {
 						PriceSource.FromOtherBidder);
 			}
 		});
-		Message message = new Message();
-		message.setBody("SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Increment: 7; Bidder: Someone else;");
-		translator.processMessage(UNUSED_CHAT, message);
+
+		String priceMessageFromOther = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Increment: 7; Bidder: Someone else;";
+		translator.processMessage(UNUSED_CHAT, message(priceMessageFromOther));
 	}
 
 	public void testNotifiesBidDetailsWhenCurrentPriceMessageReceivedFromSniper() {
@@ -71,10 +74,13 @@ public class AuctionMessageTranslatorTest extends TestCase {
 				oneOf(listener).currentPrice(192, 7, PriceSource.FromSniper);
 			}
 		});
-		Message message = new Message();
-		message.setBody("SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Increment: 7; Bidder: "
-				+ SNIPER_ID + STRUCTURED_ID_SUFFIX + ";");
-		translator.processMessage(UNUSED_CHAT, message);
+		String messageWithStructuredID = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192;"
+				+ " Increment: 7; Bidder: "
+				+ SNIPER_ID
+				+ STRUCTURED_ID_SUFFIX
+				+ ";";
+		translator
+				.processMessage(UNUSED_CHAT, message(messageWithStructuredID));
 	}
 
 	public void testHandlesStructuredIdFromSniper() {
@@ -83,34 +89,39 @@ public class AuctionMessageTranslatorTest extends TestCase {
 				oneOf(listener).currentPrice(192, 7, PriceSource.FromSniper);
 			}
 		});
-		Message message = new Message();
-		message.setBody("SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Increment: 7; Bidder: "
-				+ SNIPER_ID + ";");
-		translator2.processMessage(UNUSED_CHAT, message);
+		String messageWithID = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192;"
+				+ " Increment: 7; Bidder: " + SNIPER_ID + ";";
+		translator2.processMessage(UNUSED_CHAT, message(messageWithID));
 	}
 
 	public void testNotifiesAuctionFailedWhenBadMessageReceived()
 			throws Exception {
-		context.checking(new Expectations() {
-			{
-				exactly(1).of(listener).auctionFailed();
-			}
-		});
-		Message message = new Message();
-		message.setBody("a bad message");
-		translator.processMessage(UNUSED_CHAT, message);
+		String badMessage = "a bad message";
+		expectFailureWithMessage(badMessage);
+		translator.processMessage(UNUSED_CHAT, message(badMessage));
 	}
 
 	public void testNotifiesAuctionFailedWhenEventTypeIsMissing()
 			throws Exception {
+		String badMessage = "SOLVersion: 1.1; CurrentPrice: 192; Increment: 7; Bidder: "
+				+ SNIPER_ID + ";";
+		expectFailureWithMessage(badMessage);
+		translator.processMessage(UNUSED_CHAT, message(badMessage));
+	}
+
+	private void expectFailureWithMessage(final String badMessage) {
 		context.checking(new Expectations() {
 			{
-				exactly(1).of(listener).auctionFailed();
+				oneOf(listener).auctionFailed();
+				oneOf(failureReporter).cannotTranslateMessage(with(SNIPER_ID),
+						with(badMessage), with(any(Exception.class)));
 			}
 		});
+	}
+
+	private Message message(String badMessage) {
 		Message message = new Message();
-		message.setBody("SOLVersion: 1.1; CurrentPrice: 192; Increment: 7; Bidder: "
-				+ SNIPER_ID + ";");
-		translator.processMessage(UNUSED_CHAT, message);
+		message.setBody(badMessage);
+		return message;
 	}
 }

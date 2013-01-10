@@ -3,23 +3,26 @@ package com.jooyunghan.auctionsniper.test;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.TestCase;
+import android.app.Instrumentation;
+import android.test.InstrumentationTestCase;
 
 import com.jooyunghan.auctionsniper.Auction;
 import com.jooyunghan.auctionsniper.AuctionEventListener;
 import com.jooyunghan.auctionsniper.Item;
 import com.jooyunghan.auctionsniper.xmpp.XMPPAuctionHouse;
 
-public class XMPPAuctionHouseTest extends TestCase {
+public class XMPPAuctionHouseTest extends InstrumentationTestCase {
 	private XMPPAuctionHouse auctionHouse;
 	private final FakeAuctionServer server = new FakeAuctionServer("item-54321");
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		auctionHouse = new XMPPAuctionHouse(ApplicationRunner.XMPP_HOSTNAME,
-				ApplicationRunner.SNIPER_XMPP_ID,
-				ApplicationRunner.SNIPER_XMPP_PASSWORD);
+		Instrumentation inst = getInstrumentation();
+		auctionHouse = new XMPPAuctionHouse(inst.getTargetContext(),
+				XMPPAuctionHouse.connect(ApplicationRunner.XMPP_HOSTNAME,
+						ApplicationRunner.SNIPER_XMPP_ID,
+						ApplicationRunner.SNIPER_XMPP_PASSWORD));
 	}
 
 	public void testReceivesEventsFromAuctionServerAfterJoining()

@@ -14,26 +14,32 @@ import com.jooyunghan.auctionsniper.AuctionEventListener.PriceSource;
 
 public class AuctionMessageTranslator implements MessageListener {
 
-	private String sniperId;
-	private AuctionEventListener listener;
+	private final String sniperId;
+	private final AuctionEventListener listener;
+	private final XMPPFailureReporter failureReporter;
 
 	public AuctionMessageTranslator(String sniperId,
-			AuctionEventListener listener) {
+			AuctionEventListener listener, XMPPFailureReporter failureReporter) {
 		this.sniperId = sniperId;
 		this.listener = listener;
+		this.failureReporter = failureReporter;
 	}
 
 	@Override
 	public void processMessage(Chat chat, Message message) {
-		Log.d("han", "message received: " + message.getBody());
+		String messageBody = message.getBody();
+		Log.d("han", "message received: " + messageBody);
 		try {
-			translate(message.getBody());
+			translate(messageBody);
 		} catch (Exception parseError) {
+			failureReporter.cannotTranslateMessage(sniperId, messageBody,
+					parseError);
 			listener.auctionFailed();
 		}
 	}
 
-	private void translate(String body) throws NumberFormatException, MissingValueException {
+	private void translate(String body) throws NumberFormatException,
+			MissingValueException {
 		AuctionEvent event = AuctionEvent.from(body);
 		String type = event.type();
 		if ("CLOSE".equals(type)) {
@@ -51,11 +57,13 @@ public class AuctionMessageTranslator implements MessageListener {
 			return get("Event");
 		}
 
-		public int currentPrice() throws NumberFormatException, MissingValueException {
+		public int currentPrice() throws NumberFormatException,
+				MissingValueException {
 			return getInt("CurrentPrice");
 		}
 
-		public int increment() throws NumberFormatException, MissingValueException {
+		public int increment() throws NumberFormatException,
+				MissingValueException {
 			return getInt("Increment");
 		}
 
@@ -86,7 +94,8 @@ public class AuctionMessageTranslator implements MessageListener {
 			return value;
 		}
 
-		private int getInt(String fieldName) throws NumberFormatException, MissingValueException {
+		private int getInt(String fieldName) throws NumberFormatException,
+				MissingValueException {
 			return Integer.parseInt(get(fieldName));
 		}
 
