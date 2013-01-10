@@ -1,7 +1,5 @@
 package com.jooyunghan.auctionsniper.test;
 
-import org.jivesoftware.smack.XMPPException;
-
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.jayway.android.robotium.solo.Solo;

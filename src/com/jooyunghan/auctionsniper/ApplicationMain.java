@@ -24,6 +24,7 @@ public class ApplicationMain extends Application {
 	public void onCreate() {
 		super.onCreate();
 		Log.d("han", "Application created");
+		ConfigureLog4J.configure();
 		connection = new FutureTask<XMPPConnection>(new Callable<XMPPConnection>() {
 			@Override
 			public XMPPConnection call() throws Exception {
@@ -49,7 +50,7 @@ public class ApplicationMain extends Application {
 		}
 		
 		try {
-			auctionHouse = new XMPPAuctionHouse(this, connection.get());
+			auctionHouse = new XMPPAuctionHouse(connection.get());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ExecutionException e) {

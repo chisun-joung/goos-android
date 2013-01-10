@@ -1,6 +1,9 @@
 package com.jooyunghan.auctionsniper.xmpp;
 
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
+
+import android.util.Log;
+
 
 public class LoggingXMPPFailureReporter implements XMPPFailureReporter {
 
@@ -13,7 +16,8 @@ public class LoggingXMPPFailureReporter implements XMPPFailureReporter {
 	@Override
 	public void cannotTranslateMessage(String auctionId, String failedMessage,
 			Exception exception) {
-		logger.severe("<" + auctionId + "> " + "Could not translate message \""
+		Log.d("han", "write log");
+		logger.error("<" + auctionId + "> " + "Could not translate message \""
 				+ failedMessage + "\" " + "because \"" + exception + "\"");
 	}
 

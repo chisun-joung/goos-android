@@ -14,7 +14,7 @@ public class ApplicationRunner {
 	public static final String SNIPER_XMPP_ID = "sniper";
 	public static final String SNIPER_XMPP_PASSWORD = "sniper";
 	private AuctionSniperDriver driver;
-	private AuctionLogDriver logDriver;
+	private AuctionLogDriver logDriver = new AuctionLogDriver();
 	private MainActivity activity;
 
 	public void startBiddingWithStopPrice(Solo solo, FakeAuctionServer auction,
@@ -38,7 +38,6 @@ public class ApplicationRunner {
 	private void startSniper(Solo solo) {
 		driver = new AuctionSniperDriver(solo, 5000);
 		activity = (MainActivity) solo.getCurrentActivity();
-		logDriver = new AuctionLogDriver(activity);
 		logDriver.clearLog();
 	}
 
@@ -81,8 +80,8 @@ public class ApplicationRunner {
 				textFor(SniperState.LOSING));
 	}
 
-	public void reportsInvalidMessage(FakeAuctionServer auction,
-			String message) throws IOException {
+	public void reportsInvalidMessage(FakeAuctionServer auction, String message)
+			throws IOException {
 		logDriver.hasEntry(containsString(message));
 	}
 
