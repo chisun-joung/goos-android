@@ -2,7 +2,6 @@ package com.jooyunghan.auctionsniper.test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.hamcrest.Matcher;

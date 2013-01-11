@@ -9,10 +9,10 @@ import com.jayway.android.robotium.solo.Solo;
 import com.jooyunghan.auctionsniper.ApplicationMain;
 import com.jooyunghan.auctionsniper.R;
 import com.jooyunghan.auctionsniper.ui.MainActivity;
-import com.objogate.wl.android.driver.ActivityDriver;
-import com.objogate.wl.android.probe.HasItemWithText;
+import com.objogate.wl.android.driver.AndroidDriver;
+import com.objogate.wl.android.driver.ListViewDriver;
 
-public class AuctionSniperDriver extends ActivityDriver {
+public class AuctionSniperDriver extends AndroidDriver<Activity> {
 	public AuctionSniperDriver(Solo solo, int timeout) {
 		super(solo, timeout);
 		solo.assertCurrentActivity("activity not launched", MainActivity.class);
@@ -47,13 +47,14 @@ public class AuctionSniperDriver extends ActivityDriver {
 
 	public void showsSniperState(String itemId, String statusText)
 			throws InterruptedException {
-		check(new HasItemWithText(solo, R.id.list, itemId, statusText));
+		new ListViewDriver(this, R.id.list).hasItem(containsAllStrings(itemId,
+				statusText));
 	}
 
 	public void showsSniperState(String itemId, int lastPrice, int lastBid,
 			String statusText) throws InterruptedException {
-		check(new HasItemWithText(solo, R.id.list, itemId, String.format(
-				"%d/%d", lastPrice, lastBid), statusText));
+		new ListViewDriver(this, R.id.list).hasItem(containsAllStrings(itemId,
+				String.format("%d/%d", lastPrice, lastBid), statusText));
 	}
 
 	public void dispose() {
@@ -62,4 +63,5 @@ public class AuctionSniperDriver extends ActivityDriver {
 		ApplicationMain main = (ApplicationMain) activity.getApplication();
 		main.dispose();
 	}
+
 }

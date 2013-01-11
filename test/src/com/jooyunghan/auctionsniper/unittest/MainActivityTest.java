@@ -8,6 +8,7 @@ import com.jooyunghan.auctionsniper.Item;
 import com.jooyunghan.auctionsniper.UserRequestListener;
 import com.jooyunghan.auctionsniper.test.AuctionSniperDriver;
 import com.jooyunghan.auctionsniper.ui.MainActivity;
+import com.objogate.wl.android.probe.ValueMatcherProbe;
 
 public class MainActivityTest extends
 		ActivityInstrumentationTestCase2<MainActivity> {

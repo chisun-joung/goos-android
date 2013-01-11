@@ -1,4 +1,4 @@
-package com.jooyunghan.auctionsniper.unittest;
+package com.objogate.wl.android.probe;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
